@@ -161,12 +161,15 @@ class Game:
 		if(cur_pos == 7): #reach home
 			print('finish animasi me back to home')
 		elif(player == 'me'):
-			if(self.me.biji[cur_pos] == 0):
+			if(self.me.biji[cur_pos] == 1): #tembak
+				self.me.poin += self.rival.biji[cur_pos] + self.me.biji[cur_pos]
+				self.rival.biji[cur_pos] = 0
+				self.me.biji[cur_pos] = 0
 				print('finish animasi me', cur_pos)
 			else:
 				self.ambil_biji(cur_pos)
 		else:
-			if(self.rival.biji[cur_pos] == 0):
+			if(self.rival.biji[cur_pos] == 1): #mati
 				print('finish animasi rival', cur_pos)
 			else:
 				self.ambil_biji_rival(cur_pos)
@@ -180,12 +183,15 @@ class Game:
 		if(cur_pos == 7): #reach home
 			print('finish animasi rival back to home')
 		elif(player == 'me'):
-			if(self.me.biji[cur_pos] == 0):
+			if(self.me.biji[cur_pos] == 1):
+				self.me.poin += self.rival.biji[cur_pos] + self.me.biji[cur_pos]
+				self.rival.biji[cur_pos] = 0
+				self.me.biji[cur_pos] = 0
 				print('finish animasi me', cur_pos)
 			else:
 				self.ambil_biji(cur_pos)
 		else:
-			if(self.rival.biji[cur_pos] == 0):
+			if(self.rival.biji[cur_pos] == 1): #mati
 				print('finish animasi rival', cur_pos)
 			else:
 				self.ambil_biji_rival(cur_pos)
@@ -212,6 +218,8 @@ class Game:
 				if(cur_pos == 7 and sisa_biji > 0):
 					self.me.poin += 1
 					sisa_biji -= 1
+					if(sisa_biji == 0):
+						return 0, cur_pos, 'me'
 					sisa_biji, cur_pos, player = self.animasi_biji_rival(sisa_biji, 6)
 		return sisa_biji, cur_pos, player
 
