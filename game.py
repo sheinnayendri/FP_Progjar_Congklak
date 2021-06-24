@@ -155,42 +155,84 @@ class Game:
 	def ambil_biji(self, start_pos):
 		banyak_biji = self.me.biji[start_pos]
 		self.me.biji[start_pos] = 0
-		print('ambil', banyak_biji, start_pos + 1)
-		self.animasi_biji_me(banyak_biji, start_pos + 1)
+		print('ambil me', banyak_biji, start_pos + 1)
+		sisa_biji, cur_pos, player = self.animasi_biji_me(banyak_biji, start_pos + 1)
+		print('back to home', player, cur_pos)
+		if(cur_pos == 7): #reach home
+			print('finish animasi me back to home')
+		elif(player == 'me'):
+			if(self.me.biji[cur_pos] == 0):
+				print('finish animasi me', cur_pos)
+			else:
+				self.ambil_biji(cur_pos)
+		else:
+			if(self.rival.biji[cur_pos] == 0):
+				print('finish animasi rival', cur_pos)
+			else:
+				self.ambil_biji_rival(cur_pos)
+
+	def ambil_biji_rival(self, start_pos):
+		banyak_biji = self.rival.biji[start_pos]
+		self.rival.biji[start_pos] = 0
+		print('ambil rival', banyak_biji, start_pos - 1)
+		sisa_biji, cur_pos, player = self.animasi_biji_rival(banyak_biji, start_pos - 1)
+		print('back to rival', player, cur_pos)
+		if(cur_pos == 7): #reach home
+			print('finish animasi rival back to home')
+		elif(player == 'me'):
+			if(self.me.biji[cur_pos] == 0):
+				print('finish animasi me', cur_pos)
+			else:
+				self.ambil_biji(cur_pos)
+		else:
+			if(self.rival.biji[cur_pos] == 0):
+				print('finish animasi rival', cur_pos)
+			else:
+				self.ambil_biji_rival(cur_pos)
+		
 
 	def animasi_biji_me(self, banyak_biji, start_pos):
 		cur_pos = start_pos
 		sisa_biji = banyak_biji
+		player = 'me'
 		if(cur_pos == 7 and sisa_biji > 0):
 			self.me.poin += 1
 			sisa_biji -= 1
-			sisa_biji = self.animasi_biji_rival(sisa_biji, 6)
+			if(sisa_biji == 0):
+				return 0, cur_pos, 'me'
+			sisa_biji, cur_pos, player = self.animasi_biji_rival(sisa_biji, 6)
 		else:
 			while(sisa_biji):
 				print('animasi me', cur_pos, sisa_biji)
 				self.me.biji[cur_pos] += 1
 				sisa_biji -= 1
 				if(sisa_biji == 0):
-					return 0
+					return 0, cur_pos, 'me'
 				cur_pos += 1
 				if(cur_pos == 7 and sisa_biji > 0):
 					self.me.poin += 1
 					sisa_biji -= 1
-					sisa_biji = self.animasi_biji_rival(sisa_biji, 6)
+					sisa_biji, cur_pos, player = self.animasi_biji_rival(sisa_biji, 6)
+		return sisa_biji, cur_pos, player
 
 	def animasi_biji_rival(self, banyak_biji, start_pos):
 		cur_pos = start_pos
 		sisa_biji = banyak_biji
-		while(sisa_biji):
-			print('animasi rival', cur_pos, sisa_biji)
-			self.rival.biji[cur_pos] += 1
-			sisa_biji -= 1
-			cur_pos -= 1
-			if(sisa_biji == 0):
-				return 0
-			if(cur_pos == -1 and sisa_biji > 0):
-				print('oper to me', 0, sisa_biji);
-				sisa_biji = self.animasi_biji_me(sisa_biji, 0)
+		player = 'rival'
+		if(cur_pos == -1 and sisa_biji > 0):
+			sisa_biji, cur_pos, player = self.animasi_biji_me(sisa_biji, 0)
+		else:
+			while(sisa_biji):
+				print('animasi rival', cur_pos, sisa_biji)
+				self.rival.biji[cur_pos] += 1
+				sisa_biji -= 1
+				if(sisa_biji == 0):
+					return 0, cur_pos, 'rival'
+				cur_pos -= 1
+				if(cur_pos == -1 and sisa_biji > 0):
+					print('oper to me', 0, sisa_biji);
+					sisa_biji, cur_pos, player = self.animasi_biji_me(sisa_biji, 0)
+		return sisa_biji, cur_pos, player
 
 	@staticmethod
 	def parse_data(data):
