@@ -106,21 +106,3 @@ while True:
 	print("Connected to: ", addr)
 
 	start_new_thread(clientthread, (conn, addr))
-
-	# threading.Thread(target=clientthread, args=(conn, addr)).start()
-	# if(len(list_of_clients) == 1):
-	# 	pesan = 'menunggu pemain kedua...\n'
-	# 	print(pesan)
-	# 	conn.send(pesan.encode())
-	# elif(len(list_of_clients) == 2):
-	# 	pertama = random.randint(0,1)
-	# 	first_player = pertama
-	# 	pesan1 = 'kamu merupakan pemain pertama: MERAH\nsilahkan pilih petak\n'
-	# 	list_of_clients[pertama].send(pesan1.encode())
-	# 	pesan1 = 'id 0\n'
-	# 	list_of_clients[pertama].send(pesan1.encode())
-		
-	# 	pesan2 = 'kamu merupakan pemain kedua: BIRU\nmenunggu langkah pemain pertama\n'
-	# 	list_of_clients[pertama ^ 1].send(pesan2.encode())
-	# 	pesan2 = 'id 1\n'
-	# 	list_of_clients[pertama ^ 1].send(pesan2.encode())

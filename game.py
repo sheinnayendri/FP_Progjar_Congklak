@@ -1,3 +1,4 @@
+from typing import Counter
 import pygame
 from network import Network
 import time 
@@ -9,6 +10,7 @@ class Player:
 		self.biji = [7, 7, 7, 7, 7, 7, 7]
 		self.poin = 0
 		self.lubang = []
+		self.tanda = [False, False, False, False, False, False, False]
 
 	def draw(self, g, color, x, y, gap, radius, border):
 		for i in range(7):
@@ -25,6 +27,20 @@ class Player:
 		else:
 			pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
 
+	def animasi_biji(self, banyak_biji, start_pos):
+		cur_pos = start_pos
+		self.biji[cur_pos] = 0
+		cur_pos += 1
+		cur_pos %= 7
+		for i in range(banyak_biji):
+			self.biji[cur_pos] += 1
+			cur_pos += 1
+			if(cur_pos == 6):
+				self.poin += 1
+				self.pindah_ke_rival()
+
+
+
 class Game:
 
 	def __init__(self, w, h):
@@ -32,7 +48,7 @@ class Game:
 		self.width = w
 		self.height = h
 		self.canvas = Canvas(self.width, self.height, "Congklak")
-		self.image = pygame.image.load(r'D:\Sheinna\Kuliah\Semester 6\Progjar - C\fp\congklak.jpg')
+		self.image = pygame.image.load(r'D:\Sheinna\Kuliah\Semester 6\Progjar - C\FP_Progjar_Congklak\congklak.jpg')
 		self.me = Player((255, 0, 0))
 		self.rival = Player((0, 0, 255))
 		self.me.draw(self.canvas.get_canvas(), self.me.color, 95, 280, 52, 25, 3)
@@ -53,17 +69,7 @@ class Game:
 				if event.type == pygame.K_ESCAPE:
 					run = False
 
-			keys = pygame.key.get_pressed()
-
-			if keys[pygame.K_0]:
-				if self.me.biji[0] > 0:
-					self.me.biji[0] -= 1
-
 			self.me.check_collision()
-
-			# if event.type == pygame.MOUSEBUTTONDOWN:
-			# 	if self.rect.collidepoint(event.pos):
-			# 		self.clicked = not self.clicked
 
 			# Send Network Stuff
 			# self.rival.x, self.rival.y = self.parse_data(self.send_data())
@@ -73,12 +79,50 @@ class Game:
 			self.canvas.draw_image(pygame.transform.scale(self.image, (500, 150)), (0, 175))
 			for i in range(7):
 				self.canvas.draw_text(str(self.me.biji[i]), 32, 90 + (i * 52), 270, self.me.color)
-				# pygame.draw.circle(self.canvas.get_canvas(), self.me.color, (95, 280), 52, 25, 3)
 			for i in range(7):
 				self.canvas.draw_text(str(self.rival.biji[i]), 32, 90 + (i * 52), 210, self.rival.color)
 				
-			self.canvas.draw_text(str(self.me.poin), 32, 35, 240, self.rival.color)
-			self.canvas.draw_text(str(self.rival.poin), 32, 455, 240, self.me.color)
+			self.canvas.draw_text(str(self.me.poin), 32, 455, 240, self.me.color)
+			self.canvas.draw_text(str(self.rival.poin), 32, 35, 240, self.rival.color)
+
+			if(event.type == pygame.MOUSEBUTTONDOWN):
+				if(self.me.lubang[0].collidepoint(event.pos) and self.me.tanda[0] == False and self.me.biji[0] > 0):
+					self.ambil_biji(0)
+					self.me.tanda[0] = True
+				elif(self.me.lubang[1].collidepoint(event.pos) and self.me.tanda[1] == False and self.me.biji[1] > 0):
+					self.ambil_biji(1)
+					self.me.tanda[1] = True
+				elif(self.me.lubang[2].collidepoint(event.pos) and self.me.tanda[2] == False and self.me.biji[2] > 0):
+					self.ambil_biji(2)
+					self.me.tanda[2] = True
+				elif(self.me.lubang[3].collidepoint(event.pos) and self.me.tanda[3] == False and self.me.biji[3] > 0):
+					self.ambil_biji(3)
+					self.me.tanda[3] = True
+				elif(self.me.lubang[4].collidepoint(event.pos) and self.me.tanda[4] == False and self.me.biji[4] > 0):
+					self.ambil_biji(4)
+					self.me.tanda[4] = True
+				elif(self.me.lubang[5].collidepoint(event.pos) and self.me.tanda[5] == False and self.me.biji[5] > 0):
+					self.ambil_biji(5)
+					self.me.tanda[5] = True
+				elif(self.me.lubang[6].collidepoint(event.pos) and self.me.tanda[6] == False and self.me.biji[6] > 0):
+					self.ambil_biji(6)
+					self.me.tanda[6] = True
+
+			if(event.type == pygame.MOUSEBUTTONUP):
+				if(self.me.lubang[0].collidepoint(event.pos)):
+					self.me.tanda[0] = False
+				elif(self.me.lubang[1].collidepoint(event.pos)):
+					self.me.tanda[1] = False
+				elif(self.me.lubang[2].collidepoint(event.pos)):
+					self.me.tanda[2] = False
+				elif(self.me.lubang[3].collidepoint(event.pos)):
+					self.me.tanda[3] = False
+				elif(self.me.lubang[4].collidepoint(event.pos)):
+					self.me.tanda[4] = False
+				elif(self.me.lubang[5].collidepoint(event.pos)):
+					self.me.tanda[5] = False
+				elif(self.me.lubang[6].collidepoint(event.pos)):
+					self.me.tanda[6] = False
 
 			if(flag):
 				pesan = self.net.send('status')
@@ -99,19 +143,54 @@ class Game:
 					self.canvas.draw_text(pesan, 32, 0, 0, (255,255,255))
 			else:
 				self.canvas.draw_text(warna, 32, 0, 0, (255,255,255))
-			# self.canvas.draw_text(str(self.net.recv_msg(self.net.client)), 32, 0, 0, self.me.color)
 			self.canvas.update()
 
 		pygame.quit()
 
 	def send_data(self):
-		"""
-		Send position to server
-		:return: None
-		"""
 		data = str(self.net.id) + ":" + str(self.player.x) + "," + str(self.player.y)
 		reply = self.net.send(data)
 		return reply
+
+	def ambil_biji(self, start_pos):
+		banyak_biji = self.me.biji[start_pos]
+		self.me.biji[start_pos] = 0
+		print('ambil', banyak_biji, start_pos + 1)
+		self.animasi_biji_me(banyak_biji, start_pos + 1)
+
+	def animasi_biji_me(self, banyak_biji, start_pos):
+		cur_pos = start_pos
+		sisa_biji = banyak_biji
+		if(cur_pos == 7 and sisa_biji > 0):
+			self.me.poin += 1
+			sisa_biji -= 1
+			sisa_biji = self.animasi_biji_rival(sisa_biji, 6)
+		else:
+			while(sisa_biji):
+				print('animasi me', cur_pos, sisa_biji)
+				self.me.biji[cur_pos] += 1
+				sisa_biji -= 1
+				if(sisa_biji == 0):
+					return 0
+				cur_pos += 1
+				if(cur_pos == 7 and sisa_biji > 0):
+					self.me.poin += 1
+					sisa_biji -= 1
+					sisa_biji = self.animasi_biji_rival(sisa_biji, 6)
+
+	def animasi_biji_rival(self, banyak_biji, start_pos):
+		cur_pos = start_pos
+		sisa_biji = banyak_biji
+		while(sisa_biji):
+			print('animasi rival', cur_pos, sisa_biji)
+			self.rival.biji[cur_pos] += 1
+			sisa_biji -= 1
+			cur_pos -= 1
+			if(sisa_biji == 0):
+				return 0
+			if(cur_pos == -1 and sisa_biji > 0):
+				print('oper to me', 0, sisa_biji);
+				sisa_biji = self.animasi_biji_me(sisa_biji, 0)
 
 	@staticmethod
 	def parse_data(data):
