@@ -48,7 +48,7 @@ class Game:
 		self.width = w
 		self.height = h
 		self.canvas = Canvas(self.width, self.height, "Congklak")
-		self.image = pygame.image.load(r'D:\Sheinna\Kuliah\Semester 6\Progjar - C\FP_Progjar_Congklak\congklak.jpg')
+		self.image = pygame.image.load(r'D:\Informatics\Semester6\Pemrograman Jaringan\FinalProject\FP_Progjar_Congklak\congklak.jpg')
 		self.me = Player((255, 0, 0))
 		self.rival = Player((0, 0, 255))
 		self.me.draw(self.canvas.get_canvas(), self.me.color, 95, 280, 52, 25, 3)
@@ -76,13 +76,13 @@ class Game:
 
 			# Update Canvas
 			self.canvas.draw_background()
-			self.canvas.draw_image(pygame.transform.scale(self.image, (500, 150)), (0, 175))
+			self.canvas.draw_image(pygame.transform.scale(self.image, (505, 155)), (0, 175))
 			for i in range(7):
 				self.canvas.draw_text(str(self.me.biji[i]), 32, 90 + (i * 52), 270, self.me.color)
 			for i in range(7):
 				self.canvas.draw_text(str(self.rival.biji[i]), 32, 90 + (i * 52), 210, self.rival.color)
 				
-			self.canvas.draw_text(str(self.me.poin), 32, 455, 240, self.me.color)
+			self.canvas.draw_text(str(self.me.poin), 32, 447, 240, self.me.color)
 			self.canvas.draw_text(str(self.rival.poin), 32, 35, 240, self.rival.color)
 
 			if(event.type == pygame.MOUSEBUTTONDOWN):
@@ -163,6 +163,9 @@ class Game:
 		elif(player == 'me'):
 			if(self.me.biji[cur_pos] == 1): #tembak
 				self.me.poin += self.rival.biji[cur_pos] + self.me.biji[cur_pos]
+				self.canvas.update_text(str(self.me.poin), 32, 446, 240, self.me.color)
+				self.canvas.update()
+				pygame.time.delay(1000)
 				self.rival.biji[cur_pos] = 0
 				self.me.biji[cur_pos] = 0
 				print('finish animasi me', cur_pos)
@@ -185,6 +188,9 @@ class Game:
 		elif(player == 'me'):
 			if(self.me.biji[cur_pos] == 1):
 				self.me.poin += self.rival.biji[cur_pos] + self.me.biji[cur_pos]
+				self.canvas.update_text(str(self.me.poin), 32, 446, 240, self.me.color)
+				self.canvas.update()
+				pygame.time.delay(1000)
 				self.rival.biji[cur_pos] = 0
 				self.me.biji[cur_pos] = 0
 				print('finish animasi me', cur_pos)
@@ -204,6 +210,9 @@ class Game:
 		if(cur_pos == 7 and sisa_biji > 0):
 			self.me.poin += 1
 			sisa_biji -= 1
+			self.canvas.update_text(str(self.me.poin), 32, 446, 240, self.me.color)
+			self.canvas.update()
+			pygame.time.delay(1000)
 			if(sisa_biji == 0):
 				return 0, cur_pos, 'me'
 			sisa_biji, cur_pos, player = self.animasi_biji_rival(sisa_biji, 6)
@@ -212,12 +221,18 @@ class Game:
 				print('animasi me', cur_pos, sisa_biji)
 				self.me.biji[cur_pos] += 1
 				sisa_biji -= 1
+				self.canvas.update_text(str(self.me.biji[cur_pos]), 32, 90 + (cur_pos * 52), 270, self.me.color)
+				self.canvas.update()
+				pygame.time.delay(1000)
 				if(sisa_biji == 0):
 					return 0, cur_pos, 'me'
 				cur_pos += 1
 				if(cur_pos == 7 and sisa_biji > 0):
 					self.me.poin += 1
 					sisa_biji -= 1
+					self.canvas.update_text(str(self.me.poin), 32, 446, 240, self.me.color)
+					self.canvas.update()
+					pygame.time.delay(1000)
 					if(sisa_biji == 0):
 						return 0, cur_pos, 'me'
 					sisa_biji, cur_pos, player = self.animasi_biji_rival(sisa_biji, 6)
@@ -234,6 +249,9 @@ class Game:
 				print('animasi rival', cur_pos, sisa_biji)
 				self.rival.biji[cur_pos] += 1
 				sisa_biji -= 1
+				self.canvas.update_text(str(self.rival.biji[cur_pos]), 32, 90 + (cur_pos * 52), 210, self.rival.color)
+				self.canvas.update()
+				pygame.time.delay(1000)
 				if(sisa_biji == 0):
 					return 0, cur_pos, 'rival'
 				cur_pos -= 1
@@ -266,6 +284,14 @@ class Canvas:
 	def draw_text(self, text, size, x, y, color):
 		pygame.font.init()
 		font = pygame.font.SysFont("comicsans", size)
+		render = font.render(text, 1, color)
+
+		self.screen.blit(render, (x,y))
+
+	def update_text(self, text, size, x, y, color):
+		pygame.font.init()
+		font = pygame.font.SysFont("comicsans", size)
+		self.screen.fill(pygame.Color("white"), ((x-5), (y-1), 29, 26))
 		render = font.render(text, 1, color)
 
 		self.screen.blit(render, (x,y))
