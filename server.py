@@ -63,7 +63,7 @@ def clientthread(conn, addr):
 						# print(cur)
 						# conn.send(pesan[cur].encode())
 						# broadcast(pesan[cur ^ 1], conn)
-				# print("Recieved: " + reply)
+				# print("Received: " + reply)
 				# arr = reply.split(":")
 				# id = int(arr[0])
 				# pos[id] = reply
