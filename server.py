@@ -28,17 +28,11 @@ def check_status():
 		return 'start:'
 
 
-pesan = ['0:', '1:']
-# random_done = False
-# warna = []
-
-# def check_player(id):
-# 	if(random_done == False):
-# 		cur = random.randint(0, 1)
-# 		warna.append(cur)
-# 		warna.append(cur ^ 1)
-# 		random_done = True
-# 	return warna[id]
+cur = random.randint(0, 1)
+if(cur == 0):
+	pesan = ['0:', '1:']
+else:
+	pesan = ['1:', '0:']
 
 
 currentId = "0"
