@@ -38,7 +38,7 @@ class Game:
 		self.bg_contrast = (255, 255, 255)
 		self.on_color = (0, 255, 0)
 		self.canvas = Canvas(self.width, self.height, "Congklak")
-		self.image = pygame.image.load(r'D:\Sheinna\Kuliah\Semester 6\Progjar - C\FP_Progjar_Congklak\congklak.jpg')
+		self.image = pygame.image.load(r'congklak.jpg')
 		self.me = Player((255, 0, 0))
 		self.rival = Player((0, 0, 255))
 		self.rival_move = -1
