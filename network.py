@@ -26,7 +26,8 @@ class Network:
 			reply = self.client.recv(2048).decode()
 			return reply.split(':')[0]
 		except socket.error as e:
-			return str(e)
+			print(str(e))
+			# return str(e)
 
 	# def send_msg(self, sock):
 	# 	while True:

@@ -35,11 +35,14 @@ class Game:
 		self.height = h
 		self.animate = False
 		self.bg_color = (0, 0, 0)
+		self.bg_contrast = (255, 255, 255)
 		self.on_color = (0, 255, 0)
 		self.canvas = Canvas(self.width, self.height, "Congklak")
 		self.image = pygame.image.load(r'D:\Sheinna\Kuliah\Semester 6\Progjar - C\FP_Progjar_Congklak\congklak.jpg')
 		self.me = Player((255, 0, 0))
 		self.rival = Player((0, 0, 255))
+		self.rival_move = -1
+		self.turn = 'me'
 		self.me.draw(self.canvas.get_canvas(), self.me.color, 95, 280, 52, 25, 3)
 		self.rival.draw(self.canvas.get_canvas(), self.rival.color, 95, 220, 52, 25, 3)
 
@@ -63,59 +66,9 @@ class Game:
 
 			self.me.check_collision()
 
-			# Send Network Stuff
-			# self.rival.x, self.rival.y = self.parse_data(self.send_data())
-
 			# Update Canvas
 			self.canvas.draw_background()
 			# self.canvas.draw_image(pygame.transform.scale(self.image, (505, 155)), (0, 175))
-
-			if(event.type == pygame.MOUSEBUTTONDOWN):
-				if(self.me.lubang[0].collidepoint(event.pos) and self.me.biji[0] > 0 and self.animate == False):
-					self.animate = True
-					pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
-					self.ambil_biji(0)
-				elif(self.me.lubang[1].collidepoint(event.pos) and self.me.biji[1] > 0 and self.animate == False):
-					self.animate = True
-					pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
-					self.ambil_biji(1)
-				elif(self.me.lubang[2].collidepoint(event.pos) and self.me.biji[2] > 0 and self.animate == False):
-					self.animate = True
-					pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
-					self.ambil_biji(2)
-				elif(self.me.lubang[3].collidepoint(event.pos) and self.me.biji[3] > 0 and self.animate == False):
-					self.animate = True
-					pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
-					self.ambil_biji(3)
-				elif(self.me.lubang[4].collidepoint(event.pos) and self.me.biji[4] > 0 and self.animate == False):
-					self.animate = True
-					pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
-					self.ambil_biji(4)
-				elif(self.me.lubang[5].collidepoint(event.pos) and self.me.biji[5] > 0 and self.animate == False):
-					self.animate = True
-					pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
-					self.ambil_biji(5)
-				elif(self.me.lubang[6].collidepoint(event.pos) and self.me.biji[6] > 0 and self.animate == False):
-					self.animate = True
-					pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
-					self.ambil_biji(6)
-
-			# pygame.time.delay(1000)
-			# if(event.type == pygame.MOUSEBUTTONUP):
-			# 	if(self.me.lubang[0].collidepoint(event.pos)):
-			# 		self.me.tanda[0] = False
-			# 	elif(self.me.lubang[1].collidepoint(event.pos)):
-			# 		self.me.tanda[1] = False
-			# 	elif(self.me.lubang[2].collidepoint(event.pos)):
-			# 		self.me.tanda[2] = False
-			# 	elif(self.me.lubang[3].collidepoint(event.pos)):
-			# 		self.me.tanda[3] = False
-			# 	elif(self.me.lubang[4].collidepoint(event.pos)):
-			# 		self.me.tanda[4] = False
-			# 	elif(self.me.lubang[5].collidepoint(event.pos)):
-			# 		self.me.tanda[5] = False
-			# 	elif(self.me.lubang[6].collidepoint(event.pos)):
-			# 		self.me.tanda[6] = False
 
 			# menggambar lingkaran
 			# menggambar jumlah biji
@@ -133,7 +86,7 @@ class Game:
 
 			if(flag):
 				pesan = self.net.send('status')
-				self.canvas.draw_text('Waiting for other player 2 to join', 32, 0, 0, (255,255,255))
+				self.canvas.draw_text('Waiting for other player 2 to join', 32, 0, 0, self.bg_contrast)
 				print(pesan)
 				if(pesan == 'start'):
 					print('done')
@@ -141,25 +94,82 @@ class Game:
 					pesan = self.net.client.recv(2048).decode().split(':')[0]
 					if(pesan == '0'):
 						warna = 'You are the First Player - Red'
+						self.turn = 'me'
 						self.me.color = ((255, 0, 0))
 						self.rival.color = ((0, 0, 255))
 					else:
 						warna = 'You are the Second Player - Blue'
+						self.turn = 'rival'
 						self.rival.color = ((255, 0, 0))
 						self.me.color = ((0, 0, 255))
-					self.canvas.draw_text(pesan, 32, 0, 0, (255,255,255))
+					self.canvas.draw_text(pesan, 32, 0, 0, self.bg_contrast)
 			else:
-				self.canvas.draw_text(warna, 32, 0, 0, (255,255,255))
+				self.canvas.draw_text(warna, 32, 0, 0, self.bg_contrast)
+				print('running')
+				if(self.turn == 'rival'):
+					print('waiting rival')
+					self.rival_move = self.parse_data(self.send_data('ask'))
+					print('from server', self.rival_move)
+					if(self.rival_move != -1):
+						self.animate = True
+						self.ambil_biji_rival(self.rival_move, 'rival')
+						self.turn = 'me'
+				else:
+					print('do ur move')
+					if(event.type == pygame.MOUSEBUTTONDOWN):
+						if(self.me.lubang[0].collidepoint(event.pos) and self.me.biji[0] > 0 and self.animate == False):
+							self.animate = True
+							self.turn = 'rival'
+							self.send_data('move:0')
+							pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+							self.ambil_biji(0, 'me')
+						elif(self.me.lubang[1].collidepoint(event.pos) and self.me.biji[1] > 0 and self.animate == False):
+							self.animate = True
+							self.turn = 'rival'
+							self.send_data('move:1')
+							pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+							self.ambil_biji(1, 'me')
+						elif(self.me.lubang[2].collidepoint(event.pos) and self.me.biji[2] > 0 and self.animate == False):
+							self.animate = True
+							self.turn = 'rival'
+							self.send_data('move:2')
+							pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+							self.ambil_biji(2, 'me')
+						elif(self.me.lubang[3].collidepoint(event.pos) and self.me.biji[3] > 0 and self.animate == False):
+							self.animate = True
+							self.turn = 'rival'
+							self.send_data('move:3')
+							pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+							self.ambil_biji(3, 'me')
+						elif(self.me.lubang[4].collidepoint(event.pos) and self.me.biji[4] > 0 and self.animate == False):
+							self.animate = True
+							self.turn = 'rival'
+							self.send_data('move:4')
+							pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+							self.ambil_biji(4, 'me')
+						elif(self.me.lubang[5].collidepoint(event.pos) and self.me.biji[5] > 0 and self.animate == False):
+							self.animate = True
+							self.turn = 'rival'
+							self.send_data('move:5')
+							pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+							self.ambil_biji(5, 'me')
+						elif(self.me.lubang[6].collidepoint(event.pos) and self.me.biji[6] > 0 and self.animate == False):
+							self.animate = True
+							self.turn = 'rival'
+							self.send_data('move:6')
+							pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+							self.ambil_biji(6, 'me')
+
 			self.canvas.update()
 
 		pygame.quit()
 
-	def send_data(self):
-		data = str(self.net.id) + ":" + str(self.player.x) + "," + str(self.player.y)
+	def send_data(self, pesan):
+		data = str(self.net.id) + ":" + pesan
 		reply = self.net.send(data)
 		return reply
 
-	def ambil_biji(self, start_pos):
+	def ambil_biji(self, start_pos, giliran):
 
 		# clear biji before
 		self.me.draw(self.canvas.get_canvas(), self.bg_color, 95, 280, 52, 22, 0)
@@ -182,46 +192,53 @@ class Game:
 
 		banyak_biji = self.me.biji[start_pos]
 		self.me.biji[start_pos] = 0
-		# self.add_delay(str(self.me.biji[start_pos]), self.me.color)
-		
-		self.add_delay('me biji', start_pos, str(self.me.biji[start_pos]))
-
-		# pygame.time.delay(250)
-		# pygame.draw.circle(self.canvas.get_canvas(), self.on_color, ((95 + start_pos * 52), 280), 22)
-		# self.canvas.update_text(str(self.me.biji[start_pos]), 32, 85 + (start_pos * 52), 270, self.me.color)
-		# self.canvas.update()
+		self.add_delay('me biji', start_pos, str(self.me.biji[start_pos]), 'Ambil')
 
 		print('ambil me', banyak_biji, start_pos + 1)
-		sisa_biji, cur_pos, player = self.animasi_biji_me(banyak_biji, start_pos + 1)
+		sisa_biji, cur_pos, player = self.animasi_biji_me(banyak_biji, start_pos + 1, giliran)
 		print('back to home', player, cur_pos)
-		if(cur_pos == 7): #reach home
-			print('finish animasi me back to home')
-			self.animate = False
-		elif(player == 'me'):
-			if(self.me.biji[cur_pos] == 1): #tembak
-				self.me.poin += self.rival.biji[cur_pos] + self.me.biji[cur_pos]
-
-				self.add_delay('me poin', cur_pos, str(self.me.poin))
-
-				# pygame.time.delay(250)
-				# pygame.draw.circle(self.canvas.get_canvas(), self.on_color, (460, 250), 27)
-				# self.canvas.update_text(str(self.me.poin), 32, 446, 240, self.me.color)
-				# self.canvas.update()
-
-				self.rival.biji[cur_pos] = 0
-				self.me.biji[cur_pos] = 0
-				print('finish animasi me', cur_pos)
+		if(giliran == 'me'):
+			if(cur_pos == 7): #reach home
+				print('finish animasi me back to home')
 				self.animate = False
+			elif(player == 'me'):
+				if(self.me.biji[cur_pos] == 1): #tembak
+					self.me.poin += self.rival.biji[cur_pos] + self.me.biji[cur_pos]
+					self.add_delay('me poin', cur_pos, str(self.me.poin), str(sisa_biji))
+					self.rival.biji[cur_pos] = 0
+					self.me.biji[cur_pos] = 0
+					print('finish animasi me', cur_pos)
+					self.animate = False
+				else:
+					self.ambil_biji(cur_pos, giliran)
 			else:
-				self.ambil_biji(cur_pos)
+				if(self.rival.biji[cur_pos] == 1): #mati
+					print('finish animasi rival', cur_pos)
+					self.animate = False
+				else:
+					self.ambil_biji_rival(cur_pos, giliran)
 		else:
-			if(self.rival.biji[cur_pos] == 1): #mati
-				print('finish animasi rival', cur_pos)
+			if(cur_pos == -1): #reach home
+				print('finish animasi me back to home rival')
 				self.animate = False
+			elif(player == 'rival'):
+				if(self.rival.biji[cur_pos] == 1): #tembak
+					self.rival.poin += self.rival.biji[cur_pos] + self.me.biji[cur_pos]
+					self.add_delay('rival poin', cur_pos, str(self.rival.poin), str(sisa_biji))
+					self.rival.biji[cur_pos] = 0
+					self.me.biji[cur_pos] = 0
+					print('finish animasi me - rival', cur_pos)
+					self.animate = False
+				else:
+					self.ambil_biji_rival(cur_pos, giliran)
 			else:
-				self.ambil_biji_rival(cur_pos)
+				if(self.me.biji[cur_pos] == 1): #mati
+					print('finish animasi rival - rival', cur_pos)
+					self.animate = False
+				else:
+					self.ambil_biji(cur_pos, giliran)
 
-	def ambil_biji_rival(self, start_pos):
+	def ambil_biji_rival(self, start_pos, giliran):
 
 		# clear biji before
 		self.me.draw(self.canvas.get_canvas(), self.bg_color, 95, 280, 52, 22, 0)
@@ -244,141 +261,148 @@ class Game:
 
 		banyak_biji = self.rival.biji[start_pos]
 		self.rival.biji[start_pos] = 0
-
-		self.add_delay('rival biji', start_pos, str(self.rival.biji[start_pos]))
-
-		# pygame.time.delay(250)
-		# pygame.draw.circle(self.canvas.get_canvas(), self.on_color, ((95 + start_pos * 52), 220), 22)
-		# self.canvas.update_text(str(self.rival.biji[start_pos]), 32, 85 + (start_pos * 52), 210, self.rival.color)
-		# self.canvas.update()
-
+		self.add_delay('rival biji', start_pos, str(self.rival.biji[start_pos]), 'Ambil')
 		print('ambil rival', banyak_biji, start_pos - 1)
-		sisa_biji, cur_pos, player = self.animasi_biji_rival(banyak_biji, start_pos - 1)
+		sisa_biji, cur_pos, player = self.animasi_biji_rival(banyak_biji, start_pos - 1, giliran)
 		print('back to rival', player, cur_pos)
-		if(cur_pos == 7): #reach home
-			print('finish animasi rival back to home')
-			self.animate = False
-		elif(player == 'me'):
-			if(self.me.biji[cur_pos] == 1):
-				self.me.poin += self.rival.biji[cur_pos] + self.me.biji[cur_pos]
-
-				self.add_delay('me poin', cur_pos, str(self.me.poin))
-
-				# pygame.time.delay(250)
-				# pygame.draw.circle(self.canvas.get_canvas(), self.on_color, (460, 250), 27)
-				# self.canvas.update_text(str(self.me.poin), 32, 446, 240, self.me.color)
-				# self.canvas.update()
-				self.rival.biji[cur_pos] = 0
-				self.me.biji[cur_pos] = 0
-				print('finish animasi me', cur_pos)
+		if(giliran == 'me'):
+			if(cur_pos == 7): #reach home
+				print('finish animasi me back to home')
 				self.animate = False
+			elif(player == 'me'):
+				if(self.me.biji[cur_pos] == 1): #tembak
+					self.me.poin += self.rival.biji[cur_pos] + self.me.biji[cur_pos]
+					self.add_delay('me poin', cur_pos, str(self.me.poin), str(sisa_biji))
+					self.rival.biji[cur_pos] = 0
+					self.me.biji[cur_pos] = 0
+					print('finish animasi me', cur_pos)
+					self.animate = False
+				else:
+					self.ambil_biji(cur_pos, giliran)
 			else:
-				self.ambil_biji(cur_pos)
+				if(self.rival.biji[cur_pos] == 1): #mati
+					print('finish animasi rival', cur_pos)
+					self.animate = False
+				else:
+					self.ambil_biji_rival(cur_pos, giliran)
 		else:
-			if(self.rival.biji[cur_pos] == 1): #mati
-				print('finish animasi rival', cur_pos)
+			if(cur_pos == -1): #reach home
+				print('finish animasi me back to home rival')
 				self.animate = False
+			elif(player == 'rival'):
+				if(self.rival.biji[cur_pos] == 1): #tembak
+					self.rival.poin += self.rival.biji[cur_pos] + self.me.biji[cur_pos]
+					self.add_delay('rival poin', cur_pos, str(self.rival.poin), str(sisa_biji))
+					self.rival.biji[cur_pos] = 0
+					self.me.biji[cur_pos] = 0
+					print('finish animasi me - rival', cur_pos)
+					self.animate = False
+				else:
+					self.ambil_biji_rival(cur_pos, giliran)
 			else:
-				self.ambil_biji_rival(cur_pos)
+				if(self.me.biji[cur_pos] == 1): #mati
+					print('finish animasi rival - rival', cur_pos)
+					self.animate = False
+				else:
+					self.ambil_biji(cur_pos, giliran)
 		
 
-	def animasi_biji_me(self, banyak_biji, start_pos):
+	def animasi_biji_me(self, banyak_biji, start_pos, giliran):
 		cur_pos = start_pos
 		sisa_biji = banyak_biji
 		player = 'me'
 		if(cur_pos == 7 and sisa_biji > 0):
-			self.me.poin += 1
-			sisa_biji -= 1
-
-			self.add_delay('me poin', cur_pos, str(self.me.poin))
-
-			# pygame.time.delay(250)
-			# pygame.draw.circle(self.canvas.get_canvas(), self.on_color, (460, 250), 27)
-			# self.canvas.update_text(str(self.me.poin), 32, 446, 240, self.me.color)
-			# self.canvas.update()
-			if(sisa_biji == 0):
-				return 0, cur_pos, 'me'
-			sisa_biji, cur_pos, player = self.animasi_biji_rival(sisa_biji, 6)
+			if(giliran == 'me'):
+				self.me.poin += 1
+				sisa_biji -= 1
+				self.add_delay('me poin', cur_pos, str(self.me.poin), str(sisa_biji))
+				if(sisa_biji == 0):
+					return 0, cur_pos, 'me'
+			sisa_biji, cur_pos, player = self.animasi_biji_rival(sisa_biji, 6, giliran)
 		else:
 			while(sisa_biji):
 				print('animasi me', cur_pos, sisa_biji)
 				self.me.biji[cur_pos] += 1
 				sisa_biji -= 1
-
-				self.add_delay('me biji', cur_pos, str(self.me.biji[cur_pos]))
-
-				# pygame.time.delay(250)
-				# pygame.draw.circle(self.canvas.get_canvas(), self.on_color, ((95 + cur_pos * 52), 280), 22)
-				# self.canvas.update_text(str(self.me.biji[cur_pos]), 32, 85 + (cur_pos * 52), 270, self.me.color)
-				# self.canvas.update()
+				self.add_delay('me biji', cur_pos, str(self.me.biji[cur_pos]), str(sisa_biji))
 				if(sisa_biji == 0):
 					return 0, cur_pos, 'me'
 				cur_pos += 1
 				if(cur_pos == 7 and sisa_biji > 0):
-					self.me.poin += 1
-					sisa_biji -= 1
-
-					self.add_delay('me poin', cur_pos, str(self.me.poin))
-					# pygame.time.delay(250)
-					# pygame.draw.circle(self.canvas.get_canvas(), self.on_color, (460, 250), 27)
-					# self.canvas.update_text(str(self.me.poin), 32, 446, 240, self.me.color)
-					# self.canvas.update()
-					if(sisa_biji == 0):
-						return 0, cur_pos, 'me'
-					print('mau pindah ke rival', sisa_biji, cur_pos)
-					sisa_biji, cur_pos, player = self.animasi_biji_rival(sisa_biji, 6)
+					if(giliran == 'me'):
+						self.me.poin += 1
+						sisa_biji -= 1
+						self.add_delay('me poin', cur_pos, str(self.me.poin), str(sisa_biji))
+						if(sisa_biji == 0):
+							return 0, cur_pos, 'me'
+						print('mau pindah ke rival', sisa_biji, cur_pos)
+					sisa_biji, cur_pos, player = self.animasi_biji_rival(sisa_biji, 6, giliran)
 		return sisa_biji, cur_pos, player
 
-	def animasi_biji_rival(self, banyak_biji, start_pos):
+	def animasi_biji_rival(self, banyak_biji, start_pos, giliran):
 		cur_pos = start_pos
 		sisa_biji = banyak_biji
 		player = 'rival'
 		if(cur_pos == -1 and sisa_biji > 0):
-			sisa_biji, cur_pos, player = self.animasi_biji_me(sisa_biji, 0)
+			if(giliran == 'rival'):
+				self.rival.poin += 1
+				sisa_biji -= 1
+				self.add_delay('rival poin', cur_pos, str(self.rival.poin), str(sisa_biji))
+				if(sisa_biji == 0):
+					return 0, cur_pos, 'rival'
+			sisa_biji, cur_pos, player = self.animasi_biji_me(sisa_biji, 0, giliran)
 		else:
 			while(sisa_biji):
 				print('animasi rival', cur_pos, sisa_biji)
 				self.rival.biji[cur_pos] += 1
 				sisa_biji -= 1
-
-				self.add_delay('rival biji', cur_pos, str(self.rival.biji[cur_pos]))
-				# pygame.time.delay(250)
-				# pygame.draw.circle(self.canvas.get_canvas(), self.on_color, ((95 + cur_pos * 52), 220), 22)
-				# self.canvas.update_text(str(self.rival.biji[cur_pos]), 32, 85 + (cur_pos * 52), 210, self.rival.color)
-				# self.canvas.update()
+				self.add_delay('rival biji', cur_pos, str(self.rival.biji[cur_pos]), str(sisa_biji))
 				if(sisa_biji == 0):
 					return 0, cur_pos, 'rival'
 				cur_pos -= 1
 				if(cur_pos == -1 and sisa_biji > 0):
-					print('oper to me', 0, sisa_biji);
-					sisa_biji, cur_pos, player = self.animasi_biji_me(sisa_biji, 0)
+					if(giliran == 'rival'):
+						self.rival.poin += 1
+						sisa_biji -= 1
+						self.add_delay('rival poin', cur_pos, str(self.rival.poin), str(sisa_biji))
+						if(sisa_biji == 0):
+							return 0, cur_pos, 'rival'
+						print('oper to me', 0, sisa_biji);
+					sisa_biji, cur_pos, player = self.animasi_biji_me(sisa_biji, 0, giliran)
 		return sisa_biji, cur_pos, player
 
-	def add_delay(self, player, pos, text):
+	def add_delay(self, player, pos, text, sisa_biji):
+		# time.sleep(1)
 		# using pygame.time.delay will make Pygame not responding, better use ticks
 		# pygame.time.delay(250)
 		ticks = pygame.time.get_ticks()
 		delay_ticks = ticks + 10000
 		while(ticks > delay_ticks):
 			ticks = pygame.time.get_ticks()
+		self.canvas.screen.fill(self.bg_color, (0, 0, 500, 100))
+		self.canvas.update_text(sisa_biji, 32, 0, 0, (self.bg_contrast))
 		if(player == 'me biji'):
 			pygame.draw.circle(self.canvas.get_canvas(), self.on_color, ((95 + pos * 52), 280), 22)
 			self.canvas.update_text(text, 32, 85 + (pos * 52), 270, self.me.color)
 		elif(player == 'me poin'):
 			pygame.draw.circle(self.canvas.get_canvas(), self.on_color, (460, 250), 27)
-			self.canvas.update_text(text, 32, 446, 240, self.me.color)
+			self.canvas.update_text(text, 32, 450, 240, self.me.color)
 		elif(player == 'rival biji'):
 			pygame.draw.circle(self.canvas.get_canvas(), self.on_color, ((95 + pos * 52), 220), 22)
 			self.canvas.update_text(text, 32, 85 + (pos * 52), 210, self.rival.color)
+		else:
+			pygame.draw.circle(self.canvas.get_canvas(), self.on_color, (40, 250), 27)
+			self.canvas.update_text(text, 32, 30, 240, self.rival.color)
+
 		self.canvas.update()
 
 	@staticmethod
 	def parse_data(data):
 		try:
-			d = data.split(":")[1].split(",")
-			return int(d[0]), int(d[1])
+			d = data.split(":")[0]
+			return int(d)
 		except:
-			return 0,0
+			return -1
 
 
 class Canvas:

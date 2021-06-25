@@ -36,7 +36,8 @@ else:
 
 
 currentId = "0"
-pos = ["0:50,50", "1:100,100"]
+cur_pos = [-1, -1]
+ack = [0, 0]
 def clientthread(conn, addr):
 	global currentId, pos
 	conn.send(str.encode(currentId))
@@ -45,13 +46,16 @@ def clientthread(conn, addr):
 	while True:
 		try:
 			data = conn.recv(2048)
-			reply = data.decode('utf-8')
+			reply = data.decode()
 			print('Received:', reply)
-			if not data:
+			if (reply == ''):
+				print('goodbye')
 				conn.send(str.encode("Goodbye"))
 				break
 			else:
+				print('else')
 				if(reply == 'status'):
+					print('statussss')
 					reply = check_status()
 					print(reply)
 					conn.send(reply.encode())
@@ -60,9 +64,29 @@ def clientthread(conn, addr):
 							conn.send(pesan[0].encode())
 						else:
 							conn.send(pesan[1].encode())
-						# print(cur)
-						# conn.send(pesan[cur].encode())
-						# broadcast(pesan[cur ^ 1], conn)
+				elif(reply.split(':')[1] == 'move'):
+					print('moveeeeeeeee')
+					id = int(reply.split(':')[0])
+					cur_pos[id] = 6 - int(reply.split(':')[2])
+					ack[id] = 1
+					msg = 'ack:'
+					conn.send(msg.encode())
+				elif(reply.split(':')[1] == 'ask'):
+					print('askkkkkk')
+					id = int(reply.split(':')[0])
+					ack[id] = 0
+					print('ask', id)
+					if(ack[id ^ 1]):
+						msg = str(cur_pos[id ^ 1]) + ':'
+					else:
+						msg = '-1:'
+					conn.send(msg.encode())
+				else:
+					print('hehehehe')
+						
+
+
+					
 				# print("Recieved: " + reply)
 				# arr = reply.split(":")
 				# id = int(arr[0])
