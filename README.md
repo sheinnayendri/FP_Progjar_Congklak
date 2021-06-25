@@ -9,7 +9,7 @@ Final Project: Pemrograman Jaringan C - Kelompok 3
 | 05111840000086 | Calvin Wijaya            |
 | 05111840000116 | Clever Dicki Marpaung    |
 
-**Requirement:**
+## Requirement:
 Pastikan sudah menginstall pygame
 ```
 pip install pygame
