@@ -1,7 +1,7 @@
 from typing import Counter
 import pygame
 from network import Network
-import time 
+import time
 
 class Player:
 
@@ -78,7 +78,7 @@ class Game:
 				for i in range(7):
 					self.canvas.draw_text(str(self.me.biji[i]), 32, 85 + (i * 52), 270, self.me.color)
 				for i in range(7):
-					self.canvas.draw_text(str(self.rival.biji[i]), 32, 85 + (i * 52), 210, self.rival.color)	
+					self.canvas.draw_text(str(self.rival.biji[i]), 32, 85 + (i * 52), 210, self.rival.color)
 				self.canvas.draw_text(str(self.me.poin), 32, 450, 240, self.me.color)
 				self.canvas.draw_text(str(self.rival.poin), 32, 30, 240, self.rival.color)
 				pygame.draw.circle(self.canvas.get_canvas(), self.me.color, (460, 250), 30, 3)
@@ -108,6 +108,7 @@ class Game:
 				print('running')
 				if(self.turn == 'rival'):
 					print('waiting rival')
+					self.canvas.draw_text("Waiting rival's turn..", 25, 0, 25, self.bg_contrast)
 					self.rival_move = self.parse_data(self.send_data('ask'))
 					print('from server', self.rival_move)
 					if(self.rival_move != -1):
@@ -116,6 +117,7 @@ class Game:
 						self.turn = 'me'
 				else:
 					print('do ur move')
+					self.canvas.draw_text("It's your turn, do your move..", 25, 0, 25, self.bg_contrast)
 					if(event.type == pygame.MOUSEBUTTONDOWN):
 						if(self.me.lubang[0].collidepoint(event.pos) and self.me.biji[0] > 0 and self.animate == False):
 							self.animate = True
@@ -183,7 +185,7 @@ class Game:
 		for i in range(7):
 			self.canvas.draw_text(str(self.me.biji[i]), 32, 85 + (i * 52), 270, self.me.color)
 		for i in range(7):
-			self.canvas.draw_text(str(self.rival.biji[i]), 32, 85 + (i * 52), 210, self.rival.color)	
+			self.canvas.draw_text(str(self.rival.biji[i]), 32, 85 + (i * 52), 210, self.rival.color)
 		self.canvas.draw_text(str(self.me.poin), 32, 450, 240, self.me.color)
 		self.canvas.draw_text(str(self.rival.poin), 32, 30, 240, self.rival.color)
 		pygame.draw.circle(self.canvas.get_canvas(), self.me.color, (460, 250), 30, 3)
@@ -252,7 +254,7 @@ class Game:
 		for i in range(7):
 			self.canvas.draw_text(str(self.me.biji[i]), 32, 85 + (i * 52), 270, self.me.color)
 		for i in range(7):
-			self.canvas.draw_text(str(self.rival.biji[i]), 32, 85 + (i * 52), 210, self.rival.color)	
+			self.canvas.draw_text(str(self.rival.biji[i]), 32, 85 + (i * 52), 210, self.rival.color)
 		self.canvas.draw_text(str(self.me.poin), 32, 450, 240, self.me.color)
 		self.canvas.draw_text(str(self.rival.poin), 32, 30, 240, self.rival.color)
 		pygame.draw.circle(self.canvas.get_canvas(), self.me.color, (460, 250), 30, 3)
@@ -305,7 +307,7 @@ class Game:
 					self.animate = False
 				else:
 					self.ambil_biji(cur_pos, giliran)
-		
+
 
 	def animasi_biji_me(self, banyak_biji, start_pos, giliran):
 		cur_pos = start_pos
