@@ -78,6 +78,7 @@ def clientthread(conn, addr):
 					print('ask', id)
 					if(ack[id ^ 1]):
 						msg = str(cur_pos[id ^ 1]) + ':'
+						ack[id ^ 1] = 0
 					else:
 						msg = '-1:'
 					conn.send(msg.encode())
