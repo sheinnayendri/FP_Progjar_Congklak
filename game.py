@@ -51,6 +51,7 @@ class Game:
 		run = True
 		flag = 1
 		warna = ''
+		cek = 0
 		while run:
 			clock.tick(30)
 
@@ -114,60 +115,85 @@ class Game:
 					if(self.rival_move != -1):
 						self.animate = True
 						ganti = self.ambil_biji_rival(self.rival_move, 'rival')
+						# check giliran
 						if(ganti):
 							self.turn = 'me'
 				else:
 					print('do ur move')
-					self.canvas.draw_text("It's your turn, do your move..", 25, 0, 25, self.bg_contrast)
+					if (cek):
+						self.canvas.draw_text("You reached home, it's your turn again, do your move..", 25, 0, 25, self.bg_contrast)
+					else:
+						self.canvas.draw_text("It's your turn, make your move..", 25, 0, 25, self.bg_contrast)
 					if(event.type == pygame.MOUSEBUTTONDOWN):
 						if(self.me.lubang[0].collidepoint(event.pos) and self.me.biji[0] > 0 and self.animate == False):
 							self.animate = True
 							self.send_data('move:0')
 							ganti = self.ambil_biji(0, 'me')
+							#check giliran
+							cek = 1
 							if(ganti):
 								self.turn = 'rival'
+								cek = 0
 							pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
 						elif(self.me.lubang[1].collidepoint(event.pos) and self.me.biji[1] > 0 and self.animate == False):
 							self.animate = True
 							self.send_data('move:1')
 							ganti = self.ambil_biji(1, 'me')
+							#check giliran
+							cek = 1
 							if(ganti):
 								self.turn = 'rival'
+								cek = 0
 							pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
 						elif(self.me.lubang[2].collidepoint(event.pos) and self.me.biji[2] > 0 and self.animate == False):
 							self.animate = True
 							self.send_data('move:2')
 							ganti = self.ambil_biji(2, 'me')
+							#check giliran
+							cek = 1
 							if(ganti):
 								self.turn = 'rival'
+								cek = 0
 							pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
 						elif(self.me.lubang[3].collidepoint(event.pos) and self.me.biji[3] > 0 and self.animate == False):
 							self.animate = True
 							self.send_data('move:3')
 							ganti = self.ambil_biji(3, 'me')
+							#check giliran
+							cek = 1
 							if(ganti):
 								self.turn = 'rival'
+								cek = 0
 							pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
 						elif(self.me.lubang[4].collidepoint(event.pos) and self.me.biji[4] > 0 and self.animate == False):
 							self.animate = True
 							self.send_data('move:4')
 							ganti = self.ambil_biji(4, 'me')
+							#check giliran
+							cek = 1
 							if(ganti):
 								self.turn = 'rival'
+								cek = 0
 							pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
 						elif(self.me.lubang[5].collidepoint(event.pos) and self.me.biji[5] > 0 and self.animate == False):
 							self.animate = True
 							self.send_data('move:5')
 							ganti = self.ambil_biji(5, 'me')
+							#check giliran
+							cek = 1
 							if(ganti):
 								self.turn = 'rival'
+								cek = 0
 							pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
 						elif(self.me.lubang[6].collidepoint(event.pos) and self.me.biji[6] > 0 and self.animate == False):
 							self.animate = True
 							self.send_data('move:6')
 							ganti = self.ambil_biji(6, 'me')
+							#check giliran
+							cek = 1
 							if(ganti):
 								self.turn = 'rival'
+								cek = 0
 							pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
 
 			self.canvas.update()
@@ -211,7 +237,7 @@ class Game:
 			if(cur_pos == 7): #reach home
 				print('finish animasi me back to home')
 				self.animate = False
-				return 0
+				return 0 #giliran tetap ketika biji terakhir sampai di home/rumah sendiri
 			elif(player == 'me'):
 				if(self.me.biji[cur_pos] == 1): #tembak
 					self.me.poin += self.rival.biji[cur_pos] + self.me.biji[cur_pos]
@@ -234,7 +260,7 @@ class Game:
 			if(cur_pos == -1): #reach home
 				print('finish animasi me back to home rival')
 				self.animate = False
-				return 0
+				return 0 #giliran tetap ke rival ketika biji terakhir sampai di home rival
 			elif(player == 'rival'):
 				if(self.rival.biji[cur_pos] == 1): #tembak
 					self.rival.poin += self.rival.biji[cur_pos] + self.me.biji[cur_pos]
@@ -253,7 +279,7 @@ class Game:
 				else:
 					ganti = self.ambil_biji(cur_pos, giliran)
 					return ganti
-		return 1
+		return 1 #ganti giliran ke lawan
 
 	def ambil_biji_rival(self, start_pos, giliran):
 
@@ -286,7 +312,7 @@ class Game:
 			if(cur_pos == 7): #reach home
 				print('finish animasi me back to home')
 				self.animate = False
-				return 0
+				return 0 #giliran tetap ketika biji terakhir sampai ke home/rumah sendiri
 			elif(player == 'me'):
 				if(self.me.biji[cur_pos] == 1): #tembak
 					self.me.poin += self.rival.biji[cur_pos] + self.me.biji[cur_pos]
@@ -309,7 +335,7 @@ class Game:
 			if(cur_pos == -1): #reach home
 				print('finish animasi me back to home rival')
 				self.animate = False
-				return 0
+				return 0 #giliran tetap ke rival ketika biji terakhir sampai ke home rival
 			elif(player == 'rival'):
 				if(self.rival.biji[cur_pos] == 1): #tembak
 					self.rival.poin += self.rival.biji[cur_pos] + self.me.biji[cur_pos]
@@ -328,7 +354,7 @@ class Game:
 				else:
 					ganti = self.ambil_biji(cur_pos, giliran)
 					return ganti
-		return 1
+		return 1 #giliran ganti ke lawan
 
 
 	def animasi_biji_me(self, banyak_biji, start_pos, giliran):
