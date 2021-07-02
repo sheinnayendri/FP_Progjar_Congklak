@@ -85,7 +85,7 @@ class Game:
 				pygame.draw.circle(self.canvas.get_canvas(), self.me.color, (460, 250), 30, 3)
 				pygame.draw.circle(self.canvas.get_canvas(), self.rival.color, (40, 250), 30, 3)
 
-			if(flag):
+			if(flag == 1):
 				pesan = self.net.send('status')
 				self.canvas.draw_text('Waiting for other player 2 to join', 32, 0, 0, self.bg_contrast)
 				print(pesan)
@@ -104,7 +104,7 @@ class Game:
 						self.rival.color = ((255, 0, 0))
 						self.me.color = ((0, 0, 255))
 					self.canvas.draw_text(pesan, 32, 0, 0, self.bg_contrast)
-			else:
+			elif(flag == 0):
 				self.canvas.draw_text(warna, 32, 0, 0, self.bg_contrast)
 				print('running')
 				if(self.turn == 'rival'):
@@ -118,6 +118,8 @@ class Game:
 						# check giliran
 						if(ganti == 1):
 							self.turn = 'me'
+						elif (ganti == 3):
+							flag = 3
 				else:
 					print('do ur move')
 					if (cek == 1):
@@ -138,6 +140,8 @@ class Game:
 								cek = 0
 							elif(ganti == 2):
 								cek = 2
+							elif(ganti == 3):
+								flag = 3
 							pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
 						elif(self.me.lubang[1].collidepoint(event.pos) and self.me.biji[1] > 0 and self.animate == False):
 							self.animate = True
@@ -150,6 +154,8 @@ class Game:
 								cek = 0
 							elif(ganti == 2):
 								cek = 2
+							elif(ganti == 3):
+								flag = 3
 							pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
 						elif(self.me.lubang[2].collidepoint(event.pos) and self.me.biji[2] > 0 and self.animate == False):
 							self.animate = True
@@ -162,6 +168,8 @@ class Game:
 								cek = 0
 							elif(ganti == 2):
 								cek = 2
+							elif(ganti == 3):
+								flag = 3
 							pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
 						elif(self.me.lubang[3].collidepoint(event.pos) and self.me.biji[3] > 0 and self.animate == False):
 							self.animate = True
@@ -174,6 +182,8 @@ class Game:
 								cek = 0
 							elif(ganti == 2):
 								cek = 2
+							elif(ganti == 3):
+								flag = 3
 							pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
 						elif(self.me.lubang[4].collidepoint(event.pos) and self.me.biji[4] > 0 and self.animate == False):
 							self.animate = True
@@ -186,6 +196,8 @@ class Game:
 								cek = 0
 							elif(ganti == 2):
 								cek = 2
+							elif(ganti == 3):
+								flag = 3
 							pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
 						elif(self.me.lubang[5].collidepoint(event.pos) and self.me.biji[5] > 0 and self.animate == False):
 							self.animate = True
@@ -198,6 +210,8 @@ class Game:
 								cek = 0
 							elif(ganti == 2):
 								cek = 2
+							elif(ganti == 3):
+								flag = 3
 							pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
 						elif(self.me.lubang[6].collidepoint(event.pos) and self.me.biji[6] > 0 and self.animate == False):
 							self.animate = True
@@ -210,7 +224,17 @@ class Game:
 								cek = 0
 							elif(ganti == 2):
 								cek = 2
+							elif(ganti == 3):
+								flag = 3
 							pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+			elif(flag == 3):
+				self.canvas.draw_background()
+				if(self.me.poin > self.rival.poin):
+					self.canvas.draw_text("The winner is Me with score: " + str(self.me.poin), 25, 0, 25, self.bg_contrast)
+				elif(self.me.poin == self.rival.poin):
+					self.canvas.draw_text("The game is tie", 25, 0, 25, self.bg_contrast)
+				else:
+					self.canvas.draw_text("The winner is Rival with score: " + str(self.rival.poin), 25, 0, 25, self.bg_contrast)
 
 			self.canvas.update()
 
@@ -253,6 +277,9 @@ class Game:
 			if(cur_pos == 7): #reach home
 				print('finish animasi me back to home')
 				self.animate = False
+				check_finish = self.check_finish()
+				if (check_finish):
+					return 3
 				if self.me.biji.count(0) == 7:
 					return 2
 				return 0 #giliran tetap ketika biji terakhir sampai di home/rumah sendiri
@@ -278,6 +305,9 @@ class Game:
 			if(cur_pos == -1): #reach home
 				print('finish animasi me back to home rival')
 				self.animate = False
+				check_finish = self.check_finish()
+				if (check_finish):
+					return 3
 				if self.rival.biji.count(0) == 7:
 					return 2
 				return 0 #giliran tetap ke rival ketika biji terakhir sampai di home rival
@@ -299,6 +329,9 @@ class Game:
 				else:
 					ganti = self.ambil_biji(cur_pos, giliran)
 					return ganti
+		check_finish = self.check_finish()
+		if (check_finish):
+			return 3
 		if self.rival.biji.count(0) == 7:
 			return 2
 		return 1 #ganti giliran ke lawan
@@ -334,6 +367,9 @@ class Game:
 			if(cur_pos == 7): #reach home
 				print('finish animasi me back to home')
 				self.animate = False
+				check_finish = self.check_finish()
+				if (check_finish):
+					return 3
 				if self.me.biji.count(0) == 7:
 					return 2
 				return 0 #giliran tetap ketika biji terakhir sampai ke home/rumah sendiri
@@ -359,6 +395,9 @@ class Game:
 			if(cur_pos == -1): #reach home
 				print('finish animasi me back to home rival')
 				self.animate = False
+				check_finish = self.check_finish()
+				if (check_finish):
+					return 3
 				if self.rival.biji.count(0) == 7:
 					return 2
 				return 0 #giliran tetap ke rival ketika biji terakhir sampai ke home rival
@@ -380,9 +419,11 @@ class Game:
 				else:
 					ganti = self.ambil_biji(cur_pos, giliran)
 					return ganti
+		check_finish = self.check_finish()
+		if (check_finish):
+			return 3
 		if self.me.biji.count(0) == 7:
 			return 2
-		print("++++++++++++++++PASSINGG++++++++++++++")
 		return 1 #giliran ganti ke lawan
 
 
@@ -483,6 +524,10 @@ class Game:
 		except:
 			return -1
 
+	def check_finish(self):
+		if (self.me.biji.count(0) == 7 and self.rival.biji.count(0) == 7):
+			return 1
+		return 0
 
 class Canvas:
 
