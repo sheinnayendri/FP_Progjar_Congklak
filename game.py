@@ -246,7 +246,7 @@ class Game:
 			elif(flag == 3): #winning condition
 				if(self.poin_not_sent):
 					self.poin_not_sent = False
-					self.send_data('score:' + str(self.me.poin))
+					self.send_data('end:' + self.user_text + ':'+ self.me.poin)
 				self.canvas.draw_background()
 				if(self.me.poin > self.rival.poin):
 					self.canvas.draw_text("Congrats " + self.user_text + ", you are the winner with score: " + str(self.me.poin), 25, 0, 25, self.bg_contrast)
@@ -254,7 +254,6 @@ class Game:
 					self.canvas.draw_text("The game is tie", 25, 0, 25, self.bg_contrast)
 				else:
 					self.canvas.draw_text("The winner is " + self.rival_text + " with score: " + str(self.rival.poin), 25, 0, 25, self.bg_contrast)
-				pesan = self.send_data('end:' + self.user_text + ':'+ self.me.poin)
 			elif(flag == 4): #input username
 				self.canvas.draw_background()
 				self.canvas.draw_text("Welcome to Congklak Match!", 32, 0, 0, self.bg_contrast)
