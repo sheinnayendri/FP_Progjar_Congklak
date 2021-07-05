@@ -246,7 +246,7 @@ class Game:
 			elif(flag == 3): #winning condition
 				if(self.poin_not_sent):
 					self.poin_not_sent = False
-					self.send_data('end:' + self.user_text + ':'+ self.me.poin)
+					self.send_data('score:' + str(self.me.poin))
 				self.canvas.draw_background()
 				if(self.me.poin > self.rival.poin):
 					self.canvas.draw_text("Congrats " + self.user_text + ", you are the winner with score: " + str(self.me.poin), 25, 0, 25, self.bg_contrast)

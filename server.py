@@ -3,6 +3,7 @@ import socket
 from _thread import *
 import random
 import sys
+import os
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -109,14 +110,31 @@ def clientthread(conn, addr):
 					msg = 'ack:'
 					conn.send(msg.encode())
 					print(username[id] + ': ' + poin[id] + '\n')
-					# with open('leaderboard.txt', "a") as f:
-					# 	f.write(username[id] + ': ' + poin[id] + '\n')
+					filename = "leaderboard.txt"
+					cek = 0
+					with open(filename, "r") as in_file:
+						if os.stat(filename).st_size == 0:
+							cek = 1
+						else:
+							buf = in_file.readlines()
+					in_file.close()
+					with open(filename, "w") as out_file:
+						if(cek):
+							out_file.write(username[id] + ': ' + poin[id] + '\n')
+						else:
+							for line in buf:
+								lines = line.strip()
+								poin_now = lines.split(':')[1]
+								if int(poin[id]) >= int(poin_now.strip()):
+									line = username[id] + ': ' + poin[id] + '\n' + line
+								out_file.write(line)
+					out_file.close()
 				else:
 					print('hehehehe')
-						
 
 
-					
+
+
 				# print("Recieved: " + reply)
 				# arr = reply.split(":")
 				# id = int(arr[0])
