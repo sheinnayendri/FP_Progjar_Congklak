@@ -112,12 +112,15 @@ def clientthread(conn, addr):
 					print(username[id] + ': ' + poin[id] + '\n')
 					filename = "leaderboard.txt"
 					cek = 0
+
 					with open(filename, "r") as in_file:
 						if os.stat(filename).st_size == 0:
 							cek = 1
 						else:
 							buf = in_file.readlines()
 					in_file.close()
+
+					sudah_tulis = 0
 					with open(filename, "w") as out_file:
 						if(cek):
 							out_file.write(username[id] + ': ' + poin[id] + '\n')
@@ -127,7 +130,11 @@ def clientthread(conn, addr):
 								poin_now = lines.split(':')[1]
 								if int(poin[id]) >= int(poin_now.strip()):
 									line = username[id] + ': ' + poin[id] + '\n' + line
+									sudah_tulis = 1
 								out_file.write(line)
+							if not sudah_tulis:
+								out_file.write(username[id] + ': ' + poin[id] + '\n')
+
 					out_file.close()
 				else:
 					print('hehehehe')
