@@ -47,7 +47,7 @@ class Game:
 		self.me.draw(self.canvas.get_canvas(), self.me.color, 95, 280, 52, 25, 3)
 		self.rival.draw(self.canvas.get_canvas(), self.rival.color, 95, 220, 52, 25, 3)
 		self.poin_not_sent = True
-		
+
 		# textbox input username
 		pygame.font.init()
 		self.user_text = ''
@@ -143,7 +143,7 @@ class Game:
 					elif (cek == 2):
 						self.canvas.draw_text("Rival's hole is empty, do your move..", 25, 0, 25, self.bg_contrast)
 					else:
-						self.canvas.draw_text("It's your turn, make your move..", 25, 0, 25, self.bg_contrast)
+						self.canvas.draw_text("It's your turn, do your move..", 25, 0, 25, self.bg_contrast)
 					if(event.type == pygame.MOUSEBUTTONDOWN):
 						if(self.me.lubang[0].collidepoint(event.pos) and self.me.biji[0] > 0 and self.animate == False):
 							self.animate = True
@@ -254,6 +254,7 @@ class Game:
 					self.canvas.draw_text("The game is tie", 25, 0, 25, self.bg_contrast)
 				else:
 					self.canvas.draw_text("The winner is " + self.rival_text + " with score: " + str(self.rival.poin), 25, 0, 25, self.bg_contrast)
+				pesan = self.send_data('end:' + self.user_text + ':'+ self.me.poin)
 			elif(flag == 4): #input username
 				self.canvas.draw_background()
 				self.canvas.draw_text("Welcome to Congklak Match!", 32, 0, 0, self.bg_contrast)
@@ -267,7 +268,7 @@ class Game:
 							print(self.user_text)
 							pesan = self.send_data('register:' + self.user_text)
 							flag = 1
-			
+
 
 			self.canvas.update()
 
