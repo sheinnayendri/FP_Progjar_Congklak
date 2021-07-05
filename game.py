@@ -1,4 +1,5 @@
 from typing import Counter
+import pygame_textinput
 import pygame
 from network import Network
 import time
@@ -45,11 +46,18 @@ class Game:
 		self.turn = 'me'
 		self.me.draw(self.canvas.get_canvas(), self.me.color, 95, 280, 52, 25, 3)
 		self.rival.draw(self.canvas.get_canvas(), self.rival.color, 95, 220, 52, 25, 3)
+		self.poin_not_sent = True
+		
+		# textbox input username
+		pygame.font.init()
+		self.user_text = ''
+		self.rival_text = ''
+		self.textinput = pygame_textinput.TextInput()
 
 	def run(self):
 		clock = pygame.time.Clock()
 		run = True
-		flag = 1
+		flag = 4
 		warna = ''
 		cek = 0
 		while run:
@@ -87,23 +95,31 @@ class Game:
 
 			if(flag == 1):
 				pesan = self.net.send('status')
-				self.canvas.draw_text('Waiting for other player 2 to join', 32, 0, 0, self.bg_contrast)
+				self.canvas.draw_text('Hi, ' + str(self.user_text) + '!' , 32, 0, 0, self.bg_contrast)
+				self.canvas.draw_text('Waiting for other player 2 to join', 25, 0, 25, self.bg_contrast)
 				print(pesan)
 				if(pesan == 'start'):
 					print('done')
 					flag = 0
-					pesan = self.net.client.recv(2048).decode().split(':')[0]
-					if(pesan == '0'):
-						warna = 'You are the First Player - Red'
+					pesan = self.net.client.recv(2048).decode()
+					turn = pesan.split(':')[0]
+					player1 = pesan.split(':')[1]
+					player2 = pesan.split(':')[2]
+					if(player1 == self.user_text):
+						self.rival_text = player2
+					else:
+						self.rival_text = player1
+					if(turn == '0'):
+						warna = self.user_text + ', you are the First Player - Red vs ' + self.rival_text
 						self.turn = 'me'
 						self.me.color = ((255, 0, 0))
 						self.rival.color = ((0, 0, 255))
 					else:
-						warna = 'You are the Second Player - Blue'
+						warna = self.user_text + ', you are the Second Player - Blue vs ' + self.rival_text
 						self.turn = 'rival'
 						self.rival.color = ((255, 0, 0))
 						self.me.color = ((0, 0, 255))
-					self.canvas.draw_text(pesan, 32, 0, 0, self.bg_contrast)
+					self.canvas.draw_text(turn, 32, 0, 0, self.bg_contrast)
 			elif(flag == 0):
 				self.canvas.draw_text(warna, 32, 0, 0, self.bg_contrast)
 				print('running')
@@ -227,14 +243,31 @@ class Game:
 							elif(ganti == 3):
 								flag = 3
 							pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
-			elif(flag == 3):
+			elif(flag == 3): #winning condition
+				if(self.poin_not_sent):
+					self.poin_not_sent = False
+					self.send_data('score:' + str(self.me.poin))
 				self.canvas.draw_background()
 				if(self.me.poin > self.rival.poin):
-					self.canvas.draw_text("The winner is Me with score: " + str(self.me.poin), 25, 0, 25, self.bg_contrast)
+					self.canvas.draw_text("Congrats " + self.user_text + ", you are the winner with score: " + str(self.me.poin), 25, 0, 25, self.bg_contrast)
 				elif(self.me.poin == self.rival.poin):
 					self.canvas.draw_text("The game is tie", 25, 0, 25, self.bg_contrast)
 				else:
-					self.canvas.draw_text("The winner is Rival with score: " + str(self.rival.poin), 25, 0, 25, self.bg_contrast)
+					self.canvas.draw_text("The winner is " + self.rival_text + " with score: " + str(self.rival.poin), 25, 0, 25, self.bg_contrast)
+			elif(flag == 4): #input username
+				self.canvas.draw_background()
+				self.canvas.draw_text("Welcome to Congklak Match!", 32, 0, 0, self.bg_contrast)
+				self.canvas.draw_text("Type your username: (press enter to submit)", 32, 0, 25, self.bg_contrast)
+				events = pygame.event.get()
+				self.textinput.update(events)
+				self.canvas.get_canvas().blit(self.textinput.get_surface(), (20, 50))
+				if event.type == pygame.KEYDOWN:
+					if event.key == pygame.K_RETURN:
+							self.user_text = self.textinput.get_text()[1:]
+							print(self.user_text)
+							pesan = self.send_data('register:' + self.user_text)
+							flag = 1
+			
 
 			self.canvas.update()
 

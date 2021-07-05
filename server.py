@@ -10,6 +10,8 @@ server = 'localhost'
 port = 5555
 
 list_of_clients = []
+username = {}
+poin = {}
 server_ip = socket.gethostbyname(server)
 
 try:
@@ -21,11 +23,21 @@ except socket.error as e:
 s.listen(2)
 print("Waiting for a connection")
 
+def registered():
+	for i in range(len(list_of_clients)):
+		if i not in username.keys():
+			return False
+	return True
+
+
 def check_status():
 	if (len(list_of_clients) == 1):
 		return 'waiting:'
-	elif (len(list_of_clients) == 2):
-		return 'start:'
+	elif (len(list_of_clients) == 2 and registered()):
+		partner = username[0] + ':' + username[1] + ':'
+		return 'start:' + partner
+	else:
+		return 'waiting:'
 
 
 cur = random.randint(0, 1)
@@ -59,11 +71,13 @@ def clientthread(conn, addr):
 					reply = check_status()
 					print(reply)
 					conn.send(reply.encode())
-					if(reply == 'start:'):
+					if(reply.split(':')[0] == 'start'):
 						if(conn == list_of_clients[0]):
-							conn.send(pesan[0].encode())
+							msg = pesan[0] + reply[6:]
+							conn.send(msg.encode())
 						else:
-							conn.send(pesan[1].encode())
+							msg = pesan[1] + reply[6:]
+							conn.send(msg.encode())
 				elif(reply.split(':')[1] == 'move'):
 					print('moveeeeeeeee')
 					id = int(reply.split(':')[0])
@@ -82,6 +96,21 @@ def clientthread(conn, addr):
 					else:
 						msg = '-1:'
 					conn.send(msg.encode())
+				elif(reply.split(':')[1] == 'register'):
+					print('registering username')
+					id = int(reply.split(':')[0])
+					username[id] = reply.split(':')[2]
+					msg = 'ack:'
+					conn.send(msg.encode())
+				elif(reply.split(':')[1] == 'score'):
+					print('scoring')
+					id = int(reply.split(':')[0])
+					poin[id] = reply.split(':')[2]
+					msg = 'ack:'
+					conn.send(msg.encode())
+					print(username[id] + ': ' + poin[id] + '\n')
+					# with open('leaderboard.txt', "a") as f:
+					# 	f.write(username[id] + ': ' + poin[id] + '\n')
 				else:
 					print('hehehehe')
 						
