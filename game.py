@@ -125,7 +125,10 @@ class Game:
 				print('running')
 				if(self.turn == 'rival'):
 					print('waiting rival')
-					self.canvas.draw_text("Waiting rival's turn..", 25, 0, 25, self.bg_contrast)
+					if (cek == 22):
+						self.canvas.draw_text("Your hole is empty, it's rival's turn..", 25, 0, 25, self.bg_contrast)
+					else:
+						self.canvas.draw_text("Waiting rival's turn..", 25, 0, 25, self.bg_contrast)
 					self.rival_move = self.parse_data(self.send_data('ask'))
 					print('from server', self.rival_move)
 					if(self.rival_move != -1):
@@ -134,8 +137,13 @@ class Game:
 						# check giliran
 						if(ganti == 1):
 							self.turn = 'me'
+							cek = 0
 						elif (ganti == 3):
 							flag = 3
+						elif (ganti == 2):
+							self.turn = 'me'
+						elif (ganti == 22):
+							cek = 22
 				else:
 					print('do ur move')
 					if (cek == 1):
@@ -156,6 +164,9 @@ class Game:
 								cek = 0
 							elif(ganti == 2):
 								cek = 2
+							elif(ganti == 22):
+								self.turn = 'rival'
+								cek = 22
 							elif(ganti == 3):
 								flag = 3
 							pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
@@ -170,6 +181,9 @@ class Game:
 								cek = 0
 							elif(ganti == 2):
 								cek = 2
+							elif(ganti == 22):
+								self.turn = 'rival'
+								cek = 22
 							elif(ganti == 3):
 								flag = 3
 							pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
@@ -184,6 +198,9 @@ class Game:
 								cek = 0
 							elif(ganti == 2):
 								cek = 2
+							elif(ganti == 22):
+								self.turn = 'rival'
+								cek = 22
 							elif(ganti == 3):
 								flag = 3
 							pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
@@ -198,6 +215,9 @@ class Game:
 								cek = 0
 							elif(ganti == 2):
 								cek = 2
+							elif(ganti == 22):
+								self.turn = 'rival'
+								cek = 22
 							elif(ganti == 3):
 								flag = 3
 							pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
@@ -212,6 +232,9 @@ class Game:
 								cek = 0
 							elif(ganti == 2):
 								cek = 2
+							elif(ganti == 22):
+								self.turn = 'rival'
+								cek = 22
 							elif(ganti == 3):
 								flag = 3
 							pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
@@ -226,6 +249,9 @@ class Game:
 								cek = 0
 							elif(ganti == 2):
 								cek = 2
+							elif(ganti == 22):
+								self.turn = 'rival'
+								cek = 22
 							elif(ganti == 3):
 								flag = 3
 							pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
@@ -240,6 +266,9 @@ class Game:
 								cek = 0
 							elif(ganti == 2):
 								cek = 2
+							elif(ganti == 22):
+								self.turn = 'rival'
+								cek = 22
 							elif(ganti == 3):
 								flag = 3
 							pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
@@ -314,6 +343,8 @@ class Game:
 				if (check_finish):
 					return 3
 				if self.me.biji.count(0) == 7:
+					return 22
+				if self.rival.biji.count(0) == 7:
 					return 2
 				return 0 #giliran tetap ketika biji terakhir sampai di home/rumah sendiri
 			elif(player == 'me'):
@@ -343,6 +374,8 @@ class Game:
 					return 3
 				if self.rival.biji.count(0) == 7:
 					return 2
+				if self.me.biji.count(0) == 7:
+					return 22
 				return 0 #giliran tetap ke rival ketika biji terakhir sampai di home rival
 			elif(player == 'rival'):
 				if(self.rival.biji[cur_pos] == 1): #tembak
@@ -367,6 +400,8 @@ class Game:
 			return 3
 		if self.rival.biji.count(0) == 7:
 			return 2
+		if self.me.biji.count(0) == 7:
+			return 22
 		return 1 #ganti giliran ke lawan
 
 	def ambil_biji_rival(self, start_pos, giliran):
@@ -404,6 +439,8 @@ class Game:
 				if (check_finish):
 					return 3
 				if self.me.biji.count(0) == 7:
+					return 22
+				if self.rival.biji.count(0) == 7:
 					return 2
 				return 0 #giliran tetap ketika biji terakhir sampai ke home/rumah sendiri
 			elif(player == 'me'):
@@ -433,6 +470,8 @@ class Game:
 					return 3
 				if self.rival.biji.count(0) == 7:
 					return 2
+				if self.me.biji.count(0) == 7:
+					return 22
 				return 0 #giliran tetap ke rival ketika biji terakhir sampai ke home rival
 			elif(player == 'rival'):
 				if(self.rival.biji[cur_pos] == 1): #tembak
@@ -455,8 +494,10 @@ class Game:
 		check_finish = self.check_finish()
 		if (check_finish):
 			return 3
-		if self.me.biji.count(0) == 7:
+		if self.rival.biji.count(0) == 7:
 			return 2
+		if self.me.biji.count(0) == 7:
+			return 22
 		return 1 #giliran ganti ke lawan
 
 

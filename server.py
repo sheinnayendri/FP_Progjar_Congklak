@@ -13,6 +13,7 @@ port = 5555
 list_of_clients = []
 username = {}
 poin = {}
+leaderboard = {}
 server_ip = socket.gethostbyname(server)
 
 try:
@@ -47,10 +48,24 @@ if(cur == 0):
 else:
 	pesan = ['1:', '0:']
 
+filename = 'leaderboard.txt'
+with open(filename, "r") as in_file:
+	if os.stat(filename).st_size == 0:
+		cek = 1
+	else:
+		buf = in_file.readlines()
+		for line in buf:
+			lines = line.strip()
+			poin_now = int(lines.split(':')[1].strip())
+			user_now = lines.split(':')[0]
+			leaderboard[user_now] = poin_now
+in_file.close()
+
 
 currentId = "0"
 cur_pos = [-1, -1]
 ack = [0, 0]
+update = [0, 0]
 def clientthread(conn, addr):
 	global currentId, pos
 	conn.send(str.encode(currentId))
@@ -112,56 +127,42 @@ def clientthread(conn, addr):
 					print(username[id] + ': ' + poin[id] + '\n')
 					filename = "leaderboard.txt"
 					cek = 0
+					find = 0
 
-					with open(filename, "r") as in_file:
-						if os.stat(filename).st_size == 0:
-							cek = 1
-						else:
-							buf = in_file.readlines()
-					in_file.close()
+					for key, value in leaderboard.items():
+						print(key, value, 'unsorted')
+						if(key == username[id]):
+							find = 1
+							if(int(poin[id]) > value):
+								other_dict = {}
+								other_dict[username[id]] = int(poin[id])
+								leaderboard.update(other_dict)
+								print('updated')
+					# add new username on leaderboard
+					if(find == 0):
+						other_dict = {}
+						other_dict[username[id]] = int(poin[id])
+						leaderboard.update(other_dict)
+						
+					update[id] = 1
 
-					sudah_tulis = 0
-					maks = 0
-					with open(filename, "w") as out_file:
-						if(cek):
-							out_file.write(username[id] + ': ' + poin[id] + '\n')
-						else:
-							for line in buf:
-								lines = line.strip()
-								poin_now = lines.split(':')[1]
-								user_now = lines.split(':')[0]
-								if user_now == username[id]:
-									if int(poin[id]) >= int(poin_now.strip()):
-										line = username[id] + ': ' + poin[id] + '\n'
-										sudah_tulis = 1
-										maks = 1
-									out_file.write(line)
-								else:
-									if int(poin[id]) >= int(poin_now.strip()):
-										line = username[id] + ': ' + poin[id] + '\n'+line
-										sudah_tulis = 1
-									out_file.write(line)
-								if sudah_tulis==0 and maks==0:
-									out_file.write(username[id] + ': ' + poin[id] + '\n')
-					out_file.close()
+					if(update[0] == 1 and update[1] == 1):
+						print('updated both')
+						sorted_leaderboard = dict(sorted(leaderboard.items(), key=lambda x: x[1], reverse=True))
+						print('sorted')
+						for key, value in sorted_leaderboard.items():
+							print(key, value, 'sorted')
+						with open(filename, "w") as out_file:
+							if(cek):
+								out_file.write(username[id] + ': ' + poin[id] + '\n')
+							else:
+								for key, value in sorted_leaderboard.items():
+									text = key + ': ' + str(value) + '\n'
+									print(key, str(value), 'sorted write')
+									out_file.write(text)
+						out_file.close()
 				else:
 					print('hehehehe')
-
-
-
-
-				# print("Recieved: " + reply)
-				# arr = reply.split(":")
-				# id = int(arr[0])
-				# pos[id] = reply
-
-				# if id == 0: nid = 1
-				# if id == 1: nid = 0
-
-				# reply = pos[nid][:]
-				# print("Sending: " + reply)
-
-			# conn.sendall(str.encode(reply))
 		except:
 			break
 
