@@ -4,6 +4,7 @@ from _thread import *
 import random
 import sys
 import os
+import pickle
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -31,11 +32,16 @@ def registered():
 			return False
 	return True
 
+def playing():
+	if(play[0] == 1 and play[1] == 1):
+		return True
+	return False
+
 
 def check_status():
 	if (len(list_of_clients) == 1):
 		return 'waiting:'
-	elif (len(list_of_clients) == 2 and registered()):
+	elif (len(list_of_clients) == 2 and registered() and playing()):
 		partner = username[0] + ':' + username[1] + ':'
 		return 'start:' + partner
 	else:
@@ -66,6 +72,7 @@ currentId = "0"
 cur_pos = [-1, -1]
 ack = [0, 0]
 update = [0, 0]
+play = [0, 0]
 def clientthread(conn, addr):
 	global currentId, pos
 	conn.send(str.encode(currentId))
@@ -82,8 +89,10 @@ def clientthread(conn, addr):
 				break
 			else:
 				print('else')
-				if(reply == 'status'):
+				if(reply.split(':')[1] == 'status'):
 					print('statussss')
+					id = int(reply.split(':')[0])
+					play[id] = 1
 					reply = check_status()
 					print(reply)
 					conn.send(reply.encode())
@@ -143,7 +152,7 @@ def clientthread(conn, addr):
 						other_dict = {}
 						other_dict[username[id]] = int(poin[id])
 						leaderboard.update(other_dict)
-						
+
 					update[id] = 1
 
 					if(update[0] == 1 and update[1] == 1):
@@ -161,6 +170,10 @@ def clientthread(conn, addr):
 									print(key, str(value), 'sorted write')
 									out_file.write(text)
 						out_file.close()
+				elif(reply.split(':')[1] == 'leaderboard'):
+					print('pass leaderboard data')
+					leaderboard_pickle = pickle.dumps(leaderboard)
+					conn.send(leaderboard_pickle)
 				else:
 					print('hehehehe')
 		except:

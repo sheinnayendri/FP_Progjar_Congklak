@@ -2,7 +2,7 @@ from typing import Counter
 import pygame_textinput
 import pygame
 from network import Network
-import time
+import pickle
 
 class Player:
 
@@ -73,8 +73,6 @@ class Game:
 				if event.type == pygame.K_ESCAPE:
 					run = False
 
-			self.me.check_collision()
-
 			# Update Canvas
 			self.canvas.draw_background()
 			# self.canvas.draw_image(pygame.transform.scale(self.image, (505, 155)), (0, 175))
@@ -94,7 +92,8 @@ class Game:
 				pygame.draw.circle(self.canvas.get_canvas(), self.rival.color, (40, 250), 30, 3)
 
 			if(flag == 1):
-				pesan = self.net.send('status')
+				self.canvas.draw_background()
+				pesan = self.send_data('status')
 				self.canvas.draw_text('Hi, ' + str(self.user_text) + '!' , 32, 0, 0, self.bg_contrast)
 				self.canvas.draw_text('Waiting for other player 2 to join', 25, 0, 25, self.bg_contrast)
 				print(pesan)
@@ -121,6 +120,7 @@ class Game:
 						self.me.color = ((0, 0, 255))
 					self.canvas.draw_text(turn, 32, 0, 0, self.bg_contrast)
 			elif(flag == 0):
+				self.me.check_collision()
 				self.canvas.draw_text(warna, 32, 0, 0, self.bg_contrast)
 				print('running')
 				if(self.turn == 'rival'):
@@ -292,11 +292,56 @@ class Game:
 				self.canvas.get_canvas().blit(self.textinput.get_surface(), (20, 50))
 				if event.type == pygame.KEYDOWN:
 					if event.key == pygame.K_RETURN:
-							self.user_text = self.textinput.get_text()[1:]
-							print(self.user_text)
-							pesan = self.send_data('register:' + self.user_text)
-							flag = 1
+						self.user_text = self.textinput.get_text()[1:]
+						print(self.user_text)
+						pesan = self.send_data('register:' + self.user_text)
+						flag = 5
+			elif(flag == 5): #main menu
+				self.canvas.draw_background()
+				self.canvas.draw_text("Welcome to Congklak Match, " + self.user_text, 32, 0, 0, self.bg_contrast)
+				self.play_btn = pygame.draw.rect(self.canvas.get_canvas(), (0, 255, 0), pygame.Rect(50, 50, 60, 35), 3)
+				self.leaderboard_btn = pygame.draw.rect(self.canvas.get_canvas(), (0, 0, 255), pygame.Rect(120, 50, 125, 35), 3)
+				self.canvas.draw_text("Start", 25, 60, 60, (0, 255, 0))
+				self.canvas.draw_text("Leaderboard", 25, 130, 60, (0, 0, 255))
+				
+				if self.play_btn.collidepoint(pygame.mouse.get_pos()) or self.leaderboard_btn.collidepoint(pygame.mouse.get_pos()):
+					pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+				else:
+					pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
 
+				if(event.type == pygame.MOUSEBUTTONDOWN):
+					if(self.play_btn.collidepoint(event.pos)):
+						flag = 1
+					elif(self.leaderboard_btn.collidepoint(event.pos)):
+						flag = 6
+			elif(flag == 6): #leaderboard interface
+				self.canvas.draw_background()
+				self.canvas.draw_text("Congklak Match - Leaderboard", 32, 0, 0, self.bg_contrast)
+				self.menu_btn = pygame.draw.rect(self.canvas.get_canvas(), (0, 0, 255), pygame.Rect(400, 0, 125, 35), 3)
+				self.canvas.draw_text("Back to Menu", 25, 408, 10, (0, 0, 255))
+				leaderboard_pickle = self.send_data('leaderboard')
+				leaderboard = pickle.loads(leaderboard_pickle)
+				row = 50
+				count = 1
+				for key, value in leaderboard.items():
+					if(key == self.user_text):
+						row_color = (0, 255, 0)
+					else:
+						row_color = self.bg_contrast
+					self.canvas.draw_text(str(count) + '.', 25, 30, row, row_color)
+					self.canvas.draw_text(key, 25, 70, row, row_color)
+					self.canvas.draw_text(str(value), 25, 240, row, row_color)
+					row += 25
+					count += 1
+
+				if self.menu_btn.collidepoint(pygame.mouse.get_pos()):
+					pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+				else:
+					pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+
+				if(event.type == pygame.MOUSEBUTTONDOWN):
+					if(self.menu_btn.collidepoint(event.pos)):
+						flag = 5
 
 			self.canvas.update()
 

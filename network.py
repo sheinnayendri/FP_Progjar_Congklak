@@ -23,8 +23,12 @@ class Network:
 		"""
 		try:
 			self.client.send(str.encode(data))
-			reply = self.client.recv(2048).decode()
-			return reply.split(':')[0]
+			if(data.split(':')[1] == 'leaderboard'):
+				reply = self.client.recv(2048)
+				return reply
+			else:
+				reply = self.client.recv(2048).decode()
+				return reply.split(':')[0]
 		except socket.error as e:
 			print(str(e))
 			# return str(e)
