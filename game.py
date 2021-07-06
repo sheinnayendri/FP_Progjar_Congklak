@@ -47,6 +47,7 @@ class Game:
 		self.me.draw(self.canvas.get_canvas(), self.me.color, 95, 280, 52, 25, 3)
 		self.rival.draw(self.canvas.get_canvas(), self.rival.color, 95, 220, 52, 25, 3)
 		self.poin_not_sent = True
+		self.leaderboard_not_asked = True
 
 		# textbox input username
 		pygame.font.init()
@@ -134,6 +135,7 @@ class Game:
 					if(self.rival_move != -1):
 						self.animate = True
 						ganti = self.ambil_biji_rival(self.rival_move, 'rival')
+						print('rival ganti:', ganti)
 						# check giliran
 						if(ganti == 1):
 							self.turn = 'me'
@@ -142,6 +144,7 @@ class Game:
 							flag = 3
 						elif (ganti == 2):
 							self.turn = 'me'
+							cek = 2
 						elif (ganti == 22):
 							cek = 22
 				else:
@@ -157,6 +160,7 @@ class Game:
 							self.animate = True
 							self.send_data('move:0')
 							ganti = self.ambil_biji(0, 'me')
+							print('me ganti:', ganti)
 							#check giliran
 							cek = 1
 							if(ganti == 1):
@@ -174,6 +178,7 @@ class Game:
 							self.animate = True
 							self.send_data('move:1')
 							ganti = self.ambil_biji(1, 'me')
+							print('me ganti:', ganti)
 							#check giliran
 							cek = 1
 							if(ganti == 1):
@@ -191,6 +196,7 @@ class Game:
 							self.animate = True
 							self.send_data('move:2')
 							ganti = self.ambil_biji(2, 'me')
+							print('me ganti:', ganti)
 							#check giliran
 							cek = 1
 							if(ganti == 1):
@@ -208,6 +214,7 @@ class Game:
 							self.animate = True
 							self.send_data('move:3')
 							ganti = self.ambil_biji(3, 'me')
+							print('me ganti:', ganti)
 							#check giliran
 							cek = 1
 							if(ganti == 1):
@@ -225,6 +232,7 @@ class Game:
 							self.animate = True
 							self.send_data('move:4')
 							ganti = self.ambil_biji(4, 'me')
+							print('me ganti:', ganti)
 							#check giliran
 							cek = 1
 							if(ganti == 1):
@@ -242,6 +250,7 @@ class Game:
 							self.animate = True
 							self.send_data('move:5')
 							ganti = self.ambil_biji(5, 'me')
+							print('me ganti:', ganti)
 							#check giliran
 							cek = 1
 							if(ganti == 1):
@@ -259,6 +268,7 @@ class Game:
 							self.animate = True
 							self.send_data('move:6')
 							ganti = self.ambil_biji(6, 'me')
+							print('me ganti:', ganti)
 							#check giliran
 							cek = 1
 							if(ganti == 1):
@@ -278,11 +288,27 @@ class Game:
 					self.send_data('score:' + str(self.me.poin))
 				self.canvas.draw_background()
 				if(self.me.poin > self.rival.poin):
-					self.canvas.draw_text("Congrats " + self.user_text + ", you are the winner with score: " + str(self.me.poin), 25, 0, 25, self.bg_contrast)
+					self.canvas.draw_text(self.user_text + ": " + str(self.me.poin), 25, 10, 0, (0, 255, 0))
+					self.canvas.draw_text(self.rival_text + ": " + str(self.rival.poin), 25, 10, 25, self.bg_contrast)
+					self.canvas.draw_text("Congrats " + self.user_text + ", you are the winner", 25, 10, 75, self.bg_contrast)
 				elif(self.me.poin == self.rival.poin):
-					self.canvas.draw_text("The game is tie", 25, 0, 25, self.bg_contrast)
+					self.canvas.draw_text(self.user_text + ": " + str(self.me.poin), 25, 10, 0, (0, 0, 255))
+					self.canvas.draw_text(self.rival_text + ": " + str(self.rival.poin), 25, 10, 25, (0, 0, 255))
+					self.canvas.draw_text("The game is tie", 25, 10, 75, self.bg_contrast)
 				else:
-					self.canvas.draw_text("The winner is " + self.rival_text + " with score: " + str(self.rival.poin), 25, 0, 25, self.bg_contrast)
+					self.canvas.draw_text(self.user_text + ": " + str(self.me.poin), 25, 10, 0, (255, 0, 0))
+					self.canvas.draw_text(self.rival_text + ": " + str(self.rival.poin), 25, 10, 25, self.bg_contrast)
+					self.canvas.draw_text("Better luck next time!", 25, 10, 75, self.bg_contrast)
+				self.menu_btn = pygame.draw.rect(self.canvas.get_canvas(), (0, 0, 255), pygame.Rect(20, 125, 125, 35), 3)
+				self.canvas.draw_text("Back to Menu", 25, 25, 135, (0, 0, 255))
+				if self.menu_btn.collidepoint(pygame.mouse.get_pos()):
+					pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+				else:
+					pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+
+				if(event.type == pygame.MOUSEBUTTONDOWN):
+					if(self.menu_btn.collidepoint(event.pos)):
+						flag = 5
 			elif(flag == 4): #input username
 				self.canvas.draw_background()
 				self.canvas.draw_text("Welcome to Congklak Match!", 32, 0, 0, self.bg_contrast)
@@ -297,6 +323,19 @@ class Game:
 						pesan = self.send_data('register:' + self.user_text)
 						flag = 5
 			elif(flag == 5): #main menu
+				# reset all game data
+				self.leaderboard_not_asked = True
+				self.poin_not_sent = True
+				self.me.biji = [7, 7, 7, 7, 7, 7, 7]
+				self.me.poin = 0
+				self.me.lubang = []
+				self.me.tanda = [False, False, False, False, False, False, False]
+				self.rival.biji = [7, 7, 7, 7, 7, 7, 7]
+				self.rival.poin = 0
+				self.rival.lubang = []
+				self.rival.tanda = [False, False, False, False, False, False, False]
+				cek = 0
+
 				self.canvas.draw_background()
 				self.canvas.draw_text("Welcome to Congklak Match, " + self.user_text, 32, 0, 0, self.bg_contrast)
 				self.play_btn = pygame.draw.rect(self.canvas.get_canvas(), (0, 255, 0), pygame.Rect(50, 50, 60, 35), 3)
@@ -319,8 +358,10 @@ class Game:
 				self.canvas.draw_text("Congklak Match - Leaderboard", 32, 0, 0, self.bg_contrast)
 				self.menu_btn = pygame.draw.rect(self.canvas.get_canvas(), (0, 0, 255), pygame.Rect(400, 0, 125, 35), 3)
 				self.canvas.draw_text("Back to Menu", 25, 408, 10, (0, 0, 255))
-				leaderboard_pickle = self.send_data('leaderboard')
-				leaderboard = pickle.loads(leaderboard_pickle)
+				if(self.leaderboard_not_asked):
+					self.leaderboard_not_asked = False
+					leaderboard_pickle = self.send_data('leaderboard')
+					leaderboard = pickle.loads(leaderboard_pickle)
 				row = 50
 				count = 1
 				for key, value in leaderboard.items():

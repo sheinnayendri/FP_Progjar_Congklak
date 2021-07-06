@@ -93,6 +93,7 @@ def clientthread(conn, addr):
 					print('statussss')
 					id = int(reply.split(':')[0])
 					play[id] = 1
+					poin[id] = 0
 					reply = check_status()
 					print(reply)
 					conn.send(reply.encode())
@@ -130,6 +131,7 @@ def clientthread(conn, addr):
 				elif(reply.split(':')[1] == 'score'):
 					print('scoring')
 					id = int(reply.split(':')[0])
+					play[id] = 0
 					poin[id] = reply.split(':')[2]
 					msg = 'ack:'
 					conn.send(msg.encode())
@@ -172,7 +174,8 @@ def clientthread(conn, addr):
 						out_file.close()
 				elif(reply.split(':')[1] == 'leaderboard'):
 					print('pass leaderboard data')
-					leaderboard_pickle = pickle.dumps(leaderboard)
+					sorted_leaderboard = dict(sorted(leaderboard.items(), key=lambda x: x[1], reverse=True))
+					leaderboard_pickle = pickle.dumps(sorted_leaderboard)
 					conn.send(leaderboard_pickle)
 				else:
 					print('hehehehe')

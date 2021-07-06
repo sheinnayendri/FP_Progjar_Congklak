@@ -1,3 +1,5 @@
 sheinna: 70
-dicki: 36
-iqbaal: 28
+dicki: 56
+new: 50
+iqbaal: 49
+calvin: 40
