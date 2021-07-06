@@ -121,6 +121,7 @@ def clientthread(conn, addr):
 					in_file.close()
 
 					sudah_tulis = 0
+					maks = 0
 					with open(filename, "w") as out_file:
 						if(cek):
 							out_file.write(username[id] + ': ' + poin[id] + '\n')
@@ -128,13 +129,20 @@ def clientthread(conn, addr):
 							for line in buf:
 								lines = line.strip()
 								poin_now = lines.split(':')[1]
-								if int(poin[id]) >= int(poin_now.strip()):
-									line = username[id] + ': ' + poin[id] + '\n' + line
-									sudah_tulis = 1
-								out_file.write(line)
-							if not sudah_tulis:
-								out_file.write(username[id] + ': ' + poin[id] + '\n')
-
+								user_now = lines.split(':')[0]
+								if user_now == username[id]:
+									if int(poin[id]) >= int(poin_now.strip()):
+										line = username[id] + ': ' + poin[id] + '\n'
+										sudah_tulis = 1
+										maks = 1
+									out_file.write(line)
+								else:
+									if int(poin[id]) >= int(poin_now.strip()):
+										line = username[id] + ': ' + poin[id] + '\n'+line
+										sudah_tulis = 1
+									out_file.write(line)
+								if sudah_tulis==0 and maks==0:
+									out_file.write(username[id] + ': ' + poin[id] + '\n')
 					out_file.close()
 				else:
 					print('hehehehe')
