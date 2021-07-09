@@ -39,7 +39,14 @@ class Game:
 		self.bg_contrast = (255, 255, 255)
 		self.on_color = (0, 255, 0)
 		self.canvas = Canvas(self.width, self.height, "Congklak")
-		self.image = pygame.image.load(r'assets/congklak.png')
+		self.inputUsername = pygame.image.load(r'assets/Username.png')
+		self.dashboard = pygame.image.load(r'assets/Dashboard.png')
+		self.leaderboard = pygame.image.load(r'assets/Leaderboard.png')
+		self.winCondition = pygame.image.load(r'assets/Win.png')
+		self.loseCondition = pygame.image.load(r'assets/Lose.png')
+		self.tieCondition = pygame.image.load(r'assets/Tie.png')
+		self.playing = pygame.image.load(r'assets/Playing.png')
+		self.waitingRoom = pygame.image.load(r'assets/WaitingRoom.png')
 		self.me = Player((255, 0, 0))
 		self.rival = Player((0, 0, 255))
 		self.rival_move = -1
@@ -76,27 +83,25 @@ class Game:
 
 			# Update Canvas
 			self.canvas.draw_background()
-			self.canvas.draw_image(pygame.transform.scale(self.image, (550, 160)), (0, 172))
-
+			self.canvas.draw_image(pygame.transform.scale(self.playing, (700, 700)), (0, 0))
 			# menggambar lingkaran
 			# menggambar jumlah biji
 			if(self.animate == False):
-				self.me.draw(self.canvas.get_canvas(), self.me.color, 125, 280, 52, 25, 2)
-				self.rival.draw(self.canvas.get_canvas(), self.rival.color, 125, 220, 52, 25, 2)
+				self.me.draw(self.canvas.get_canvas(), self.bg_color, 200, 380, 52, 25, 2)
+				self.rival.draw(self.canvas.get_canvas(), self.bg_color, 200, 318, 52, 25, 2)
 				for i in range(7):
-					self.canvas.draw_text(str(self.me.biji[i]), 32, 115 + (i * 52), 270, self.me.color)
+					self.canvas.draw_text(str(self.me.biji[i]), 32, 190 + (i * 52), 371, self.me.color)
 				for i in range(7):
-					self.canvas.draw_text(str(self.rival.biji[i]), 32, 115 + (i * 52), 210, self.rival.color)
-				self.canvas.draw_text(str(self.me.poin), 32, 480, 240, self.me.color)
-				self.canvas.draw_text(str(self.rival.poin), 32, 60, 240, self.rival.color)
-				pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (490, 250), 30, 2)
-				pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (70, 250), 30, 2)
+					self.canvas.draw_text(str(self.rival.biji[i]), 32, 190 + (i * 52), 309, self.rival.color)
+				self.canvas.draw_text(str(self.me.poin), 32, 554, 340, self.me.color)
+				self.canvas.draw_text(str(self.rival.poin), 32, 134, 340, self.rival.color)
+				pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (145, 348), 30, 2)
+				pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (565, 348), 30, 2)
 
 			if(flag == 1):
 				self.canvas.draw_background()
 				pesan = self.send_data('status')
-				self.canvas.draw_text('Hi, ' + str(self.user_text) + '!' , 32, 0, 0, self.bg_contrast)
-				self.canvas.draw_text('Waiting for other player 2 to join', 25, 0, 25, self.bg_contrast)
+				self.canvas.draw_image(pygame.transform.scale(self.waitingRoom, (700, 700)), (0, 0))
 				print(pesan)
 				if(pesan == 'start'):
 					print('done')
@@ -288,19 +293,21 @@ class Game:
 					self.send_data('score:' + str(self.me.poin))
 				self.canvas.draw_background()
 				if(self.me.poin > self.rival.poin):
-					self.canvas.draw_text(self.user_text + ": " + str(self.me.poin), 25, 10, 0, (0, 255, 0))
-					self.canvas.draw_text(self.rival_text + ": " + str(self.rival.poin), 25, 10, 25, self.bg_contrast)
-					self.canvas.draw_text("Congrats " + self.user_text + ", you are the winner", 25, 10, 75, self.bg_contrast)
+					self.canvas.draw_image(pygame.transform.scale(self.winCondition, (700, 700)), (0, 0))
+					self.canvas.draw_text(self.user_text + ": " + str(self.me.poin), 35, 100, 200, (0, 255, 0))
+					self.canvas.draw_text(self.rival_text + ": " + str(self.rival.poin), 35, 100, 250, (255, 0, 0))
+					self.canvas.draw_text("Congrats " + self.user_text + ", you are the winner", 45, 75, 125, self.bg_contrast)
 				elif(self.me.poin == self.rival.poin):
-					self.canvas.draw_text(self.user_text + ": " + str(self.me.poin), 25, 10, 0, (0, 0, 255))
-					self.canvas.draw_text(self.rival_text + ": " + str(self.rival.poin), 25, 10, 25, (0, 0, 255))
-					self.canvas.draw_text("The game is tie", 25, 10, 75, self.bg_contrast)
+					self.canvas.draw_image(pygame.transform.scale(self.tieCondition, (700, 700)), (0, 0))
+					self.canvas.draw_text(self.user_text + ": " + str(self.me.poin), 35, 100, 200, (0, 0, 255))
+					self.canvas.draw_text(self.rival_text + ": " + str(self.rival.poin), 35, 100, 250, (0, 0, 255))
+					self.canvas.draw_text("The game is tie", 45, 240, 125, self.bg_contrast)
 				else:
-					self.canvas.draw_text(self.user_text + ": " + str(self.me.poin), 25, 10, 0, (255, 0, 0))
-					self.canvas.draw_text(self.rival_text + ": " + str(self.rival.poin), 25, 10, 25, self.bg_contrast)
-					self.canvas.draw_text("Better luck next time!", 25, 10, 75, self.bg_contrast)
-				self.menu_btn = pygame.draw.rect(self.canvas.get_canvas(), (0, 0, 255), pygame.Rect(20, 125, 125, 35), 3)
-				self.canvas.draw_text("Back to Menu", 25, 25, 135, (0, 0, 255))
+					self.canvas.draw_image(pygame.transform.scale(self.loseCondition, (700, 700)), (0, 0))
+					self.canvas.draw_text(self.user_text + ": " + str(self.me.poin), 35, 100, 200, (255, 0, 0))
+					self.canvas.draw_text(self.rival_text + ": " + str(self.rival.poin), 35, 100, 250, (0, 255, 0))
+					self.canvas.draw_text("Better luck next time!", 45, 200, 125, self.bg_contrast)
+				self.menu_btn = pygame.draw.rect(self.canvas.get_canvas(), (198, 139, 89), pygame.Rect(190, 630, 285, 35), 1)
 				if self.menu_btn.collidepoint(pygame.mouse.get_pos()):
 					pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
 				else:
@@ -311,11 +318,10 @@ class Game:
 						flag = 5
 			elif(flag == 4): #input username
 				self.canvas.draw_background()
-				self.canvas.draw_text("Welcome to Congklak Match!", 32, 0, 0, self.bg_contrast)
-				self.canvas.draw_text("Type your username: (press enter to submit)", 32, 0, 25, self.bg_contrast)
+				self.canvas.draw_image(pygame.transform.scale(self.inputUsername, (700, 700)), (0, 0))
 				events = pygame.event.get()
 				self.textinput.update(events)
-				self.canvas.get_canvas().blit(self.textinput.get_surface(), (20, 50))
+				self.canvas.get_canvas().blit(self.textinput.get_surface(), (155, 363))
 				if event.type == pygame.KEYDOWN:
 					if event.key == pygame.K_RETURN:
 						self.user_text = self.textinput.get_text()[1:]
@@ -337,11 +343,9 @@ class Game:
 				cek = 0
 
 				self.canvas.draw_background()
-				self.canvas.draw_text("Welcome to Congklak Match, " + self.user_text, 32, 0, 0, self.bg_contrast)
-				self.play_btn = pygame.draw.rect(self.canvas.get_canvas(), (0, 255, 0), pygame.Rect(50, 50, 60, 35), 3)
-				self.leaderboard_btn = pygame.draw.rect(self.canvas.get_canvas(), (0, 0, 255), pygame.Rect(120, 50, 125, 35), 3)
-				self.canvas.draw_text("Start", 25, 60, 60, (0, 255, 0))
-				self.canvas.draw_text("Leaderboard", 25, 130, 60, (0, 0, 255))
+				self.canvas.draw_image(pygame.transform.scale(self.dashboard, (700, 700)), (0, 0))
+				self.play_btn = pygame.draw.rect(self.canvas.get_canvas(), (64, 34, 24), pygame.Rect(150, 260, 400, 80), 1)
+				self.leaderboard_btn = pygame.draw.rect(self.canvas.get_canvas(), (64, 34, 24), pygame.Rect(150, 363, 400, 80), 1)
 				
 				if self.play_btn.collidepoint(pygame.mouse.get_pos()) or self.leaderboard_btn.collidepoint(pygame.mouse.get_pos()):
 					pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
@@ -355,23 +359,22 @@ class Game:
 						flag = 6
 			elif(flag == 6): #leaderboard interface
 				self.canvas.draw_background()
-				self.canvas.draw_text("Congklak Match - Leaderboard", 32, 0, 0, self.bg_contrast)
-				self.menu_btn = pygame.draw.rect(self.canvas.get_canvas(), (0, 0, 255), pygame.Rect(400, 0, 125, 35), 3)
-				self.canvas.draw_text("Back to Menu", 25, 408, 10, (0, 0, 255))
+				self.canvas.draw_image(pygame.transform.scale(self.leaderboard, (700, 700)), (0, 0))
+				self.menu_btn = pygame.draw.rect(self.canvas.get_canvas(), (198, 139, 89), pygame.Rect(190, 630, 285, 35), 1)
 				if(self.leaderboard_not_asked):
 					self.leaderboard_not_asked = False
 					leaderboard_pickle = self.send_data('leaderboard')
 					leaderboard = pickle.loads(leaderboard_pickle)
-				row = 50
+				row = 180
 				count = 1
 				for key, value in leaderboard.items():
 					if(key == self.user_text):
 						row_color = (0, 255, 0)
 					else:
 						row_color = self.bg_contrast
-					self.canvas.draw_text(str(count) + '.', 25, 30, row, row_color)
-					self.canvas.draw_text(key, 25, 70, row, row_color)
-					self.canvas.draw_text(str(value), 25, 240, row, row_color)
+					self.canvas.draw_text(str(count) + '.', 25, 190, row, row_color)
+					self.canvas.draw_text(key, 25, 290, row, row_color)
+					self.canvas.draw_text(str(value), 25, 470, row, row_color)
 					row += 25
 					count += 1
 
@@ -396,22 +399,22 @@ class Game:
 	def ambil_biji(self, start_pos, giliran):
 
 		# clear biji before
-		self.me.draw(self.canvas.get_canvas(), self.bg_color, 125, 280, 52, 22, 0)
-		self.rival.draw(self.canvas.get_canvas(), self.bg_color, 125, 220, 52, 22, 0)
-		pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (490, 250), 27, 0)
-		pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (70, 250), 27, 0)
+		self.me.draw(self.canvas.get_canvas(), self.bg_color, 200, 380, 52, 22, 0)
+		self.rival.draw(self.canvas.get_canvas(), self.bg_color, 200, 318, 52, 22, 0)
+		pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (145, 348), 27, 0)
+		pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (565, 348), 27, 0)
 
 		# gambar kondisi awal
-		self.me.draw(self.canvas.get_canvas(), self.me.color, 125, 280, 52, 25, 2)
-		self.rival.draw(self.canvas.get_canvas(), self.rival.color, 125, 220, 52, 25, 2)
+		self.me.draw(self.canvas.get_canvas(), self.bg_color, 200, 380, 52, 25, 2)
+		self.rival.draw(self.canvas.get_canvas(), self.bg_color, 200, 318, 52, 25, 2)
 		for i in range(7):
-			self.canvas.draw_text(str(self.me.biji[i]), 32, 115 + (i * 52), 270, self.me.color)
+			self.canvas.draw_text(str(self.me.biji[i]), 32, 190 + (i * 52), 371, self.me.color)
 		for i in range(7):
-			self.canvas.draw_text(str(self.rival.biji[i]), 32, 115 + (i * 52), 210, self.rival.color)
-		self.canvas.draw_text(str(self.me.poin), 32, 480, 240, self.me.color)
-		self.canvas.draw_text(str(self.rival.poin), 32, 60, 240, self.rival.color)
-		pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (490, 250), 30, 2)
-		pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (70, 250), 30, 2)
+			self.canvas.draw_text(str(self.rival.biji[i]), 32, 190 + (i * 52), 309, self.rival.color)
+		self.canvas.draw_text(str(self.me.poin), 32, 554, 340, self.me.color)
+		self.canvas.draw_text(str(self.rival.poin), 32, 134, 340, self.rival.color)
+		pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (145, 348), 30, 2)
+		pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (565, 348), 30, 2)
 		self.canvas.update()
 
 		banyak_biji = self.me.biji[start_pos]
@@ -493,22 +496,22 @@ class Game:
 	def ambil_biji_rival(self, start_pos, giliran):
 
 		# clear biji before
-		self.me.draw(self.canvas.get_canvas(), self.bg_color, 125, 280, 52, 22, 0)
-		self.rival.draw(self.canvas.get_canvas(), self.bg_color, 125, 220, 52, 22, 0)
-		pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (490, 250), 27, 0)
-		pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (70, 250), 27, 0)
+		self.me.draw(self.canvas.get_canvas(), self.bg_color, 200, 380, 52, 22, 0)
+		self.rival.draw(self.canvas.get_canvas(), self.bg_color, 200, 318, 52, 22, 0)
+		pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (145, 348), 27, 0)
+		pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (565, 348), 27, 0)
 
 		# gambar kondisi awal
-		self.me.draw(self.canvas.get_canvas(), self.me.color, 125, 280, 52, 25, 2)
-		self.rival.draw(self.canvas.get_canvas(), self.rival.color, 125, 220, 52, 25, 2)
+		self.me.draw(self.canvas.get_canvas(), self.bg_color, 200, 380, 52, 25, 2)
+		self.rival.draw(self.canvas.get_canvas(), self.bg_color, 200, 318, 52, 25, 2)
 		for i in range(7):
-			self.canvas.draw_text(str(self.me.biji[i]), 32, 115 + (i * 52), 270, self.me.color)
+			self.canvas.draw_text(str(self.me.biji[i]), 32, 190 + (i * 52), 371, self.me.color)
 		for i in range(7):
-			self.canvas.draw_text(str(self.rival.biji[i]), 32, 115 + (i * 52), 210, self.rival.color)
-		self.canvas.draw_text(str(self.me.poin), 32, 480, 240, self.me.color)
-		self.canvas.draw_text(str(self.rival.poin), 32, 60, 240, self.rival.color)
-		pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (490, 250), 30, 2)
-		pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (70, 250), 30, 2)
+			self.canvas.draw_text(str(self.rival.biji[i]), 32, 190 + (i * 52), 309, self.rival.color)
+		self.canvas.draw_text(str(self.me.poin), 32, 554, 340, self.me.color)
+		self.canvas.draw_text(str(self.rival.poin), 32, 134, 340, self.rival.color)
+		pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (145, 348), 30, 2)
+		pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (565, 348), 30, 2)
 		self.canvas.update()
 
 		banyak_biji = self.rival.biji[start_pos]
@@ -659,20 +662,20 @@ class Game:
 		delay_ticks = ticks + 10000
 		while(ticks > delay_ticks):
 			ticks = pygame.time.get_ticks()
-		self.canvas.screen.fill(self.bg_color, (0, 0, 500, 100))
-		self.canvas.update_text(sisa_biji, 32, 0, 0, (self.bg_contrast))
+		# self.canvas.screen.fill(self.bg_color, (0, 0, 500, 100))
+		# self.canvas.update_text(sisa_biji, 32, 0, 0, (self.bg_contrast))
 		if(player == 'me biji'):
-			pygame.draw.circle(self.canvas.get_canvas(), self.on_color, ((125 + pos * 52), 280), 22)
-			self.canvas.update_text(text, 32, 115 + (pos * 52), 270, self.me.color)
+			pygame.draw.circle(self.canvas.get_canvas(), self.on_color, ((200 + pos * 52), 380), 22)
+			self.canvas.update_text(text, 32, 190 + (pos * 52), 371, self.me.color)
 		elif(player == 'me poin'):
-			pygame.draw.circle(self.canvas.get_canvas(), self.on_color, (490, 250), 27)
-			self.canvas.update_text(text, 32, 480, 240, self.me.color)
+			pygame.draw.circle(self.canvas.get_canvas(), self.on_color, (565, 348), 27)
+			self.canvas.update_text(text, 32, 554, 340, self.me.color)
 		elif(player == 'rival biji'):
-			pygame.draw.circle(self.canvas.get_canvas(), self.on_color, ((125 + pos * 52), 220), 22)
-			self.canvas.update_text(text, 32, 115 + (pos * 52), 210, self.rival.color)
+			pygame.draw.circle(self.canvas.get_canvas(), self.on_color, ((200 + pos * 52), 318), 22)
+			self.canvas.update_text(text, 32, 190 + (pos * 52), 309, self.rival.color)
 		else:
-			pygame.draw.circle(self.canvas.get_canvas(), self.on_color, (70, 250), 27)
-			self.canvas.update_text(text, 32, 60, 240, self.rival.color)
+			pygame.draw.circle(self.canvas.get_canvas(), self.on_color, (145, 348), 27)
+			self.canvas.update_text(text, 32, 134, 340, self.rival.color)
 
 		self.canvas.update()
 

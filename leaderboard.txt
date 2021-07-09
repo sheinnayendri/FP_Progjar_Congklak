@@ -5,5 +5,4 @@ Nath: 51
 new: 50
 iqbaal: 49
 Anggi: 49
-k: 42
 calvin: 40
