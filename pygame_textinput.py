@@ -181,8 +181,8 @@ class TextInput:
         self.cursor_surface.fill(color)
 
     def clear_text(self):
-        self.input_string = ""
-        self.cursor_position = 0
+        self.input_string = " "
+        self.cursor_position = 1
 
 
 

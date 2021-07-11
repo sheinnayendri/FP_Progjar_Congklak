@@ -23,7 +23,7 @@ class Network:
 		"""
 		try:
 			self.client.send(str.encode(data))
-			if(data.split(':')[1] == 'leaderboard'):
+			if(data.split(':')[1] == 'leaderboard' or data.split(':')[1] == 'askchat'):
 				reply = self.client.recv(2048)
 				return reply
 			else:

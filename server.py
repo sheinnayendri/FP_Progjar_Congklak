@@ -15,6 +15,7 @@ list_of_clients = []
 username = {}
 poin = {}
 leaderboard = {}
+chat = []
 server_ip = socket.gethostbyname(server)
 
 try:
@@ -114,7 +115,6 @@ def clientthread(conn, addr):
 				elif(reply.split(':')[1] == 'ask'):
 					print('askkkkkk')
 					id = int(reply.split(':')[0])
-					# ack[id] = 0
 					print('ask', id)
 					if(ack[id ^ 1]):
 						msg = str(cur_pos[id ^ 1]) + ':'
@@ -177,6 +177,19 @@ def clientthread(conn, addr):
 					sorted_leaderboard = dict(sorted(leaderboard.items(), key=lambda x: x[1], reverse=True))
 					leaderboard_pickle = pickle.dumps(sorted_leaderboard)
 					conn.send(leaderboard_pickle)
+				elif(reply.split(':')[1] == 'chat'):
+					print('accept chat')
+					isi = reply.split(':')[2]
+					print(isi)
+					chat.append(isi)
+					if(len(chat) > 5):
+						chat.pop(0)
+					msg = 'ack:'
+					conn.send(msg.encode())
+				elif(reply.split(':')[1] == 'askchat'):
+					print('pass last 5 chats')
+					chat_pickle = pickle.dumps(chat)
+					conn.send(chat_pickle)
 				else:
 					print('hehehehe')
 		except:

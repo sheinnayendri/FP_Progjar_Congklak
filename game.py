@@ -55,12 +55,17 @@ class Game:
 		self.rival.draw(self.canvas.get_canvas(), self.rival.color, 125, 220, 52, 25, 2)
 		self.poin_not_sent = True
 		self.leaderboard_not_asked = True
+		self.chat_ongoing = False
+		self.chat = []
+		self.chat_color = (255, 0, 0)
+		self.penanda_chat = 0
 
 		# textbox input username
 		pygame.font.init()
 		self.user_text = ''
 		self.rival_text = ''
 		self.textinput = pygame_textinput.TextInput()
+		self.chatinput = pygame_textinput.TextInput()
 
 	def run(self):
 		clock = pygame.time.Clock()
@@ -301,6 +306,39 @@ class Game:
 							elif(ganti == 3):
 								flag = 3
 							pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+				
+				self.chat_btn_on = pygame.draw.rect(self.canvas.get_canvas(), self.chat_color, pygame.Rect(150, 500, 100, 40), 1)
+				self.chat_btn_off = pygame.draw.rect(self.canvas.get_canvas(), self.chat_color, pygame.Rect(300, 500, 100, 40), 1)
+				
+				if(event.type == pygame.MOUSEBUTTONDOWN and self.chat_btn_on.collidepoint(event.pos)):
+					self.chat_ongoing = False
+					self.chat_color = (255, 0, 0)
+
+				if(event.type == pygame.MOUSEBUTTONDOWN and self.chat_btn_off.collidepoint(event.pos)):
+					self.chat_ongoing = True
+					self.chat_color = (0, 255, 0)
+
+				print(self.chat_ongoing, self.penanda_chat)
+				# # online chat features
+				if(self.chat_ongoing == True):
+					events = pygame.event.get()
+					self.chatinput.update(events)
+					self.canvas.get_canvas().blit(self.chatinput.get_surface(), (155, 550))
+					if event.type == pygame.KEYDOWN:
+						if event.key == pygame.K_RIGHT:
+							chat_msg = self.chatinput.get_text()[1:]
+							if(chat_msg == ''):
+								continue
+							chat_msg_send = self.user_text + ' > ' + chat_msg
+							print(chat_msg_send)
+							self.send_data('chat:' + chat_msg_send)
+							self.chatinput.clear_text()
+				chat_pickle = self.send_data('askchat:')
+				self.chat = pickle.loads(chat_pickle)
+				row = 570
+				for i in range(len(self.chat)):
+					self.canvas.draw_text(str(self.chat[i]), 25, 155, row, (0, 0, 0))
+					row += 20
 			elif(flag == 3): #winning condition
 				if(self.poin_not_sent):
 					self.poin_not_sent = False
@@ -344,8 +382,10 @@ class Game:
 						flag = 5
 			elif(flag == 5): #main menu
 				# reset all game data
+				self.chatinput.clear_text()
 				self.leaderboard_not_asked = True
 				self.poin_not_sent = True
+				self.chat_ongoing = False
 				self.me.biji = [7, 7, 7, 7, 7, 7, 7]
 				self.me.poin = 0
 				self.me.lubang = []
