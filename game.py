@@ -4,6 +4,13 @@ import pygame
 from network import Network
 import pickle
 
+# chat
+import socket
+import threading
+import tkinter
+import tkinter.scrolledtext
+from tkinter import simpledialog
+
 class Player:
 
 	def __init__(self, color):
@@ -62,6 +69,11 @@ class Game:
 		self.rival_text = ''
 		self.textinput = pygame_textinput.TextInput()
 
+
+		# # textbox chat
+		# self.userchat_textinput = pygame_textinput.TextInput()
+		# self.rivalchat_textinput = pygame_textinput.TextInput()
+
 	def run(self):
 		clock = pygame.time.Clock()
 		run = True
@@ -98,6 +110,7 @@ class Game:
 				pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (145, 348), 30, 2)
 				pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (565, 348), 30, 2)
 
+
 			if(flag == 1):
 				self.canvas.draw_background()
 				pesan = self.send_data('status')
@@ -129,6 +142,37 @@ class Game:
 				self.me.check_collision()
 				self.canvas.draw_text(warna, 32, 0, 0, self.bg_contrast)
 				print('running')
+
+				# # Test buat textinput chat
+				# events = pygame.event.get()
+				# self.userchat_textinput.update(events)
+				# self.canvas.get_canvas().blit(self.userchat_textinput.get_surface(), (155, 500))
+
+				# Chat
+				self.win = tkinter.Tk()
+				self.win.configure(bg="lightgray")
+
+				self.chat_label = tkinter.Label(self.win, text="Chat:", bg="lightgray")
+				self.chat_label.config(font=("Arial", 12))
+				self.chat_label.pack(padx=20, pady=5)
+
+				self.text_area = tkinter.scrolledtext.ScrolledText(self.win)
+				self.text_area.pack(padx=20, pady=5)
+				self.text_area.config(state="disabled")
+
+				self.msg_label = tkinter.Label(self.win, text="Message:", bg="lightgray")
+				self.msg_label.config(font=("Arial", 12))
+				self.msg_label.pack(padx=20, pady=5)
+
+				self.input_area = tkinter.Text(self.win, height=3)
+				self.input_area.pack(padx=20, pady=5)
+
+				self.send_button = tkinter.Button(self.win, text="Send", command=self.write)
+				self.send_button.config(font=("Arial", 12))
+				self.send_button.pack(padx=20, pady=5)
+
+
+
 				if(self.turn == 'rival'):
 					print('waiting rival')
 					if (cek == 22):
@@ -322,6 +366,7 @@ class Game:
 				events = pygame.event.get()
 				self.textinput.update(events)
 				self.canvas.get_canvas().blit(self.textinput.get_surface(), (155, 363))
+
 				if event.type == pygame.KEYDOWN:
 					if event.key == pygame.K_RETURN:
 						self.user_text = self.textinput.get_text()[1:]
@@ -691,6 +736,12 @@ class Game:
 		if (self.me.biji.count(0) == 7 and self.rival.biji.count(0) == 7):
 			return 1
 		return 0
+
+	# for chat
+	def write(self):
+		message = f"username: {self.input_area.get('1.0', 'end')}"
+		self.sock.send(message.encode('utf-8'))
+		self.input_area.delete('1.0', 'end')
 
 class Canvas:
 

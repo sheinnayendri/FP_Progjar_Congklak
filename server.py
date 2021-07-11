@@ -5,6 +5,7 @@ import random
 import sys
 import os
 import pickle
+import threading
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -73,7 +74,8 @@ cur_pos = [-1, -1]
 ack = [0, 0]
 update = [0, 0]
 play = [0, 0]
-def clientthread(conn, addr):
+
+def clientthread(conn, addr): # handle
 	global currentId, pos
 	conn.send(str.encode(currentId))
 	currentId = "1"
@@ -126,6 +128,7 @@ def clientthread(conn, addr):
 					print('registering username')
 					id = int(reply.split(':')[0])
 					username[id] = reply.split(':')[2]
+					# print(username)
 					msg = 'ack:'
 					conn.send(msg.encode())
 				elif(reply.split(':')[1] == 'score'):
@@ -185,22 +188,38 @@ def clientthread(conn, addr):
 	print("Connection Closed")
 	conn.close()
 
-def broadcast(message, connection):
-	for clients in list_of_clients:
-		if clients != connection:
-			try:
-				clients.send(message.encode())
-			except:
-				clients.close()
-				remove(clients)
+# def broadcast(message, connection):
+# 	for clients in list_of_clients:
+# 		if clients != connection:
+# 			try:
+# 				clients.send(message.encode())
+# 			except:
+# 				clients.close()
+# 				remove(clients)
 
 def remove(connection):
 	if connection in list_of_clients:
 		list_of_clients.remove(connection)
 
+# chat
+# def handle(client):
+# 	while True:
+# 		try:
+# 			message = client.recv(1024)
+# 			print("who says what")
+# 			broadcast(message)
+# 		except:
+# 			index = list_of_clients.index(client)
+# 			list_of_clients.remove(client)
+# 			client.close()
+# 			username.pop(index)
+# 			break
+
 while True:
+	# receive
 	conn, addr = s.accept()
 	list_of_clients.append(conn)
 	print("Connected to: ", addr)
+
 
 	start_new_thread(clientthread, (conn, addr))
