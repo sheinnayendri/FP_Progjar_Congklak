@@ -323,7 +323,7 @@ class Game:
 				self.textinput.update(events)
 				self.canvas.get_canvas().blit(self.textinput.get_surface(), (155, 363))
 				if event.type == pygame.KEYDOWN:
-					if event.key == pygame.K_RETURN:
+					if event.key == pygame.K_RIGHT:
 						self.user_text = self.textinput.get_text()[1:]
 						print(self.user_text)
 						pesan = self.send_data('register:' + self.user_text)
