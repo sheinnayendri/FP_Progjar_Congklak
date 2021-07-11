@@ -114,7 +114,7 @@ def clientthread(conn, addr):
 				elif(reply.split(':')[1] == 'ask'):
 					print('askkkkkk')
 					id = int(reply.split(':')[0])
-					ack[id] = 0
+					# ack[id] = 0
 					print('ask', id)
 					if(ack[id ^ 1]):
 						msg = str(cur_pos[id ^ 1]) + ':'

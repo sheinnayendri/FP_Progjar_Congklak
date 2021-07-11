@@ -163,7 +163,9 @@ class Game:
 					if(event.type == pygame.MOUSEBUTTONDOWN):
 						if(self.me.lubang[0].collidepoint(event.pos) and self.me.biji[0] > 0 and self.animate == False):
 							self.animate = True
-							self.send_data('move:0')
+							balasan = self.send_data('move:0')
+							while(balasan != 'ack'):
+								balasan = self.send_data('move:0')
 							ganti = self.ambil_biji(0, 'me')
 							print('me ganti:', ganti)
 							#check giliran
@@ -181,7 +183,9 @@ class Game:
 							pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
 						elif(self.me.lubang[1].collidepoint(event.pos) and self.me.biji[1] > 0 and self.animate == False):
 							self.animate = True
-							self.send_data('move:1')
+							balasan = self.send_data('move:1')
+							while(balasan != 'ack'):
+								balasan = self.send_data('move:1')
 							ganti = self.ambil_biji(1, 'me')
 							print('me ganti:', ganti)
 							#check giliran
@@ -199,7 +203,9 @@ class Game:
 							pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
 						elif(self.me.lubang[2].collidepoint(event.pos) and self.me.biji[2] > 0 and self.animate == False):
 							self.animate = True
-							self.send_data('move:2')
+							balasan = self.send_data('move:2')
+							while(balasan != 'ack'):
+								balasan = self.send_data('move:2')
 							ganti = self.ambil_biji(2, 'me')
 							print('me ganti:', ganti)
 							#check giliran
@@ -217,7 +223,9 @@ class Game:
 							pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
 						elif(self.me.lubang[3].collidepoint(event.pos) and self.me.biji[3] > 0 and self.animate == False):
 							self.animate = True
-							self.send_data('move:3')
+							balasan = self.send_data('move:3')
+							while(balasan != 'ack'):
+								balasan = self.send_data('move:3')
 							ganti = self.ambil_biji(3, 'me')
 							print('me ganti:', ganti)
 							#check giliran
@@ -235,7 +243,9 @@ class Game:
 							pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
 						elif(self.me.lubang[4].collidepoint(event.pos) and self.me.biji[4] > 0 and self.animate == False):
 							self.animate = True
-							self.send_data('move:4')
+							balasan = self.send_data('move:4')
+							while(balasan != 'ack'):
+								balasan = self.send_data('move:4')
 							ganti = self.ambil_biji(4, 'me')
 							print('me ganti:', ganti)
 							#check giliran
@@ -253,7 +263,9 @@ class Game:
 							pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
 						elif(self.me.lubang[5].collidepoint(event.pos) and self.me.biji[5] > 0 and self.animate == False):
 							self.animate = True
-							self.send_data('move:5')
+							balasan = self.send_data('move:5')
+							while(balasan != 'ack'):
+								balasan = self.send_data('move:5')
 							ganti = self.ambil_biji(5, 'me')
 							print('me ganti:', ganti)
 							#check giliran
@@ -271,7 +283,9 @@ class Game:
 							pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
 						elif(self.me.lubang[6].collidepoint(event.pos) and self.me.biji[6] > 0 and self.animate == False):
 							self.animate = True
-							self.send_data('move:6')
+							balasan = self.send_data('move:6')
+							while(balasan != 'ack'):
+								balasan = self.send_data('move:6')
 							ganti = self.ambil_biji(6, 'me')
 							print('me ganti:', ganti)
 							#check giliran
