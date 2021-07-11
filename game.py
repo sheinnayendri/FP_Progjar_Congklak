@@ -35,6 +35,7 @@ class Game:
 		self.width = w
 		self.height = h
 		self.animate = False
+		self.brown_color = (198, 139, 89)
 		self.bg_color = (134, 84, 57)
 		self.bg_contrast = (255, 255, 255)
 		self.on_color = (0, 255, 0)
@@ -92,16 +93,16 @@ class Game:
 			# menggambar lingkaran
 			# menggambar jumlah biji
 			if(self.animate == False):
-				self.me.draw(self.canvas.get_canvas(), self.bg_color, 200, 380, 52, 25, 2)
-				self.rival.draw(self.canvas.get_canvas(), self.bg_color, 200, 318, 52, 25, 2)
+				self.me.draw(self.canvas.get_canvas(), self.bg_color, 200, 340, 52, 25, 2)
+				self.rival.draw(self.canvas.get_canvas(), self.bg_color, 200, 278, 52, 25, 2)
 				for i in range(7):
-					self.canvas.draw_text(str(self.me.biji[i]), 32, 190 + (i * 52), 371, self.me.color)
+					self.canvas.draw_text(str(self.me.biji[i]), 32, 190 + (i * 52), 331, self.me.color)
 				for i in range(7):
-					self.canvas.draw_text(str(self.rival.biji[i]), 32, 190 + (i * 52), 309, self.rival.color)
-				self.canvas.draw_text(str(self.me.poin), 32, 554, 340, self.me.color)
-				self.canvas.draw_text(str(self.rival.poin), 32, 134, 340, self.rival.color)
-				pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (145, 348), 30, 2)
-				pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (565, 348), 30, 2)
+					self.canvas.draw_text(str(self.rival.biji[i]), 32, 190 + (i * 52), 269, self.rival.color)
+				self.canvas.draw_text(str(self.me.poin), 32, 554, 300, self.me.color)
+				self.canvas.draw_text(str(self.rival.poin), 32, 134, 300, self.rival.color)
+				pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (145, 308), 30, 2)
+				pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (565, 308), 30, 2)
 
 			if(flag == 1):
 				self.canvas.draw_background()
@@ -307,9 +308,10 @@ class Game:
 								flag = 3
 							pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
 				
-				self.chat_btn_on = pygame.draw.rect(self.canvas.get_canvas(), self.chat_color, pygame.Rect(150, 500, 100, 40), 1)
-				self.chat_btn_off = pygame.draw.rect(self.canvas.get_canvas(), self.chat_color, pygame.Rect(300, 500, 100, 40), 1)
-				
+				self.chat_btn_on = pygame.draw.rect(self.canvas.get_canvas(), (198, 139, 89), pygame.Rect(186, 458, 56, 31), 1)
+				self.chat_btn_off = pygame.draw.rect(self.canvas.get_canvas(), (198, 139, 89), pygame.Rect(251, 458, 56, 31), 1)
+				pygame.draw.circle(self.canvas.get_canvas(), self.chat_color, (165, 475), 5, 0)
+
 				if(event.type == pygame.MOUSEBUTTONDOWN and self.chat_btn_on.collidepoint(event.pos)):
 					self.chat_ongoing = False
 					self.chat_color = (255, 0, 0)
@@ -323,7 +325,7 @@ class Game:
 				if(self.chat_ongoing == True):
 					events = pygame.event.get()
 					self.chatinput.update(events)
-					self.canvas.get_canvas().blit(self.chatinput.get_surface(), (155, 550))
+					self.canvas.get_canvas().blit(self.chatinput.get_surface(), (57, 504))
 					if event.type == pygame.KEYDOWN:
 						if event.key == pygame.K_RIGHT:
 							chat_msg = self.chatinput.get_text()[1:]
@@ -335,9 +337,9 @@ class Game:
 							self.chatinput.clear_text()
 				chat_pickle = self.send_data('askchat:')
 				self.chat = pickle.loads(chat_pickle)
-				row = 570
+				row = 545
 				for i in range(len(self.chat)):
-					self.canvas.draw_text(str(self.chat[i]), 25, 155, row, (0, 0, 0))
+					self.canvas.draw_text(str(self.chat[i]), 25, 57, row, self.brown_color)
 					row += 20
 			elif(flag == 3): #winning condition
 				if(self.poin_not_sent):
@@ -453,22 +455,22 @@ class Game:
 	def ambil_biji(self, start_pos, giliran):
 
 		# clear biji before
-		self.me.draw(self.canvas.get_canvas(), self.bg_color, 200, 380, 52, 22, 0)
-		self.rival.draw(self.canvas.get_canvas(), self.bg_color, 200, 318, 52, 22, 0)
-		pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (145, 348), 27, 0)
-		pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (565, 348), 27, 0)
+		self.me.draw(self.canvas.get_canvas(), self.bg_color, 200, 340, 52, 22, 0)
+		self.rival.draw(self.canvas.get_canvas(), self.bg_color, 200, 278, 52, 22, 0)
+		pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (145, 308), 27, 0)
+		pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (565, 308), 27, 0)
 
 		# gambar kondisi awal
-		self.me.draw(self.canvas.get_canvas(), self.bg_color, 200, 380, 52, 25, 2)
-		self.rival.draw(self.canvas.get_canvas(), self.bg_color, 200, 318, 52, 25, 2)
+		self.me.draw(self.canvas.get_canvas(), self.bg_color, 200, 340, 52, 25, 2)
+		self.rival.draw(self.canvas.get_canvas(), self.bg_color, 200, 278, 52, 25, 2)
 		for i in range(7):
-			self.canvas.draw_text(str(self.me.biji[i]), 32, 190 + (i * 52), 371, self.me.color)
+			self.canvas.draw_text(str(self.me.biji[i]), 32, 190 + (i * 52), 331, self.me.color)
 		for i in range(7):
-			self.canvas.draw_text(str(self.rival.biji[i]), 32, 190 + (i * 52), 309, self.rival.color)
-		self.canvas.draw_text(str(self.me.poin), 32, 554, 340, self.me.color)
-		self.canvas.draw_text(str(self.rival.poin), 32, 134, 340, self.rival.color)
-		pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (145, 348), 30, 2)
-		pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (565, 348), 30, 2)
+			self.canvas.draw_text(str(self.rival.biji[i]), 32, 190 + (i * 52), 269, self.rival.color)
+		self.canvas.draw_text(str(self.me.poin), 32, 554, 300, self.me.color)
+		self.canvas.draw_text(str(self.rival.poin), 32, 134, 300, self.rival.color)
+		pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (145, 308), 30, 2)
+		pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (565, 308), 30, 2)
 		self.canvas.update()
 
 		banyak_biji = self.me.biji[start_pos]
@@ -550,22 +552,22 @@ class Game:
 	def ambil_biji_rival(self, start_pos, giliran):
 
 		# clear biji before
-		self.me.draw(self.canvas.get_canvas(), self.bg_color, 200, 380, 52, 22, 0)
-		self.rival.draw(self.canvas.get_canvas(), self.bg_color, 200, 318, 52, 22, 0)
-		pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (145, 348), 27, 0)
-		pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (565, 348), 27, 0)
+		self.me.draw(self.canvas.get_canvas(), self.bg_color, 200, 340, 52, 22, 0)
+		self.rival.draw(self.canvas.get_canvas(), self.bg_color, 200, 278, 52, 22, 0)
+		pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (145, 308), 27, 0)
+		pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (565, 308), 27, 0)
 
 		# gambar kondisi awal
-		self.me.draw(self.canvas.get_canvas(), self.bg_color, 200, 380, 52, 25, 2)
-		self.rival.draw(self.canvas.get_canvas(), self.bg_color, 200, 318, 52, 25, 2)
+		self.me.draw(self.canvas.get_canvas(), self.bg_color, 200, 340, 52, 25, 2)
+		self.rival.draw(self.canvas.get_canvas(), self.bg_color, 200, 278, 52, 25, 2)
 		for i in range(7):
-			self.canvas.draw_text(str(self.me.biji[i]), 32, 190 + (i * 52), 371, self.me.color)
+			self.canvas.draw_text(str(self.me.biji[i]), 32, 190 + (i * 52), 331, self.me.color)
 		for i in range(7):
-			self.canvas.draw_text(str(self.rival.biji[i]), 32, 190 + (i * 52), 309, self.rival.color)
-		self.canvas.draw_text(str(self.me.poin), 32, 554, 340, self.me.color)
-		self.canvas.draw_text(str(self.rival.poin), 32, 134, 340, self.rival.color)
-		pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (145, 348), 30, 2)
-		pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (565, 348), 30, 2)
+			self.canvas.draw_text(str(self.rival.biji[i]), 32, 190 + (i * 52), 269, self.rival.color)
+		self.canvas.draw_text(str(self.me.poin), 32, 554, 300, self.me.color)
+		self.canvas.draw_text(str(self.rival.poin), 32, 134, 300, self.rival.color)
+		pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (145, 308), 30, 2)
+		pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (565, 308), 30, 2)
 		self.canvas.update()
 
 		banyak_biji = self.rival.biji[start_pos]
@@ -719,17 +721,17 @@ class Game:
 		# self.canvas.screen.fill(self.bg_color, (0, 0, 500, 100))
 		# self.canvas.update_text(sisa_biji, 32, 0, 0, (self.bg_contrast))
 		if(player == 'me biji'):
-			pygame.draw.circle(self.canvas.get_canvas(), self.on_color, ((200 + pos * 52), 380), 22)
-			self.canvas.update_text(text, 32, 190 + (pos * 52), 371, self.me.color)
+			pygame.draw.circle(self.canvas.get_canvas(), self.on_color, ((200 + pos * 52), 340), 22)
+			self.canvas.update_text(text, 32, 190 + (pos * 52), 331, self.me.color)
 		elif(player == 'me poin'):
-			pygame.draw.circle(self.canvas.get_canvas(), self.on_color, (565, 348), 27)
-			self.canvas.update_text(text, 32, 554, 340, self.me.color)
+			pygame.draw.circle(self.canvas.get_canvas(), self.on_color, (565, 308), 27)
+			self.canvas.update_text(text, 32, 554, 300, self.me.color)
 		elif(player == 'rival biji'):
-			pygame.draw.circle(self.canvas.get_canvas(), self.on_color, ((200 + pos * 52), 318), 22)
-			self.canvas.update_text(text, 32, 190 + (pos * 52), 309, self.rival.color)
+			pygame.draw.circle(self.canvas.get_canvas(), self.on_color, ((200 + pos * 52), 278), 22)
+			self.canvas.update_text(text, 32, 190 + (pos * 52), 269, self.rival.color)
 		else:
-			pygame.draw.circle(self.canvas.get_canvas(), self.on_color, (145, 348), 27)
-			self.canvas.update_text(text, 32, 134, 340, self.rival.color)
+			pygame.draw.circle(self.canvas.get_canvas(), self.on_color, (145, 308), 27)
+			self.canvas.update_text(text, 32, 134, 300, self.rival.color)
 
 		self.canvas.update()
 
