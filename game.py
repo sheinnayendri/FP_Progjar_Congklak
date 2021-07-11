@@ -3,6 +3,7 @@ import pygame_textinput
 import pygame
 from network import Network
 import pickle
+import os
 
 class Player:
 
@@ -96,11 +97,11 @@ class Game:
 				self.me.draw(self.canvas.get_canvas(), self.bg_color, 200, 340, 52, 25, 2)
 				self.rival.draw(self.canvas.get_canvas(), self.bg_color, 200, 278, 52, 25, 2)
 				for i in range(7):
-					self.canvas.draw_text(str(self.me.biji[i]), 32, 190 + (i * 52), 331, self.me.color)
+					self.canvas.draw_text(str(self.me.biji[i]), 22, 190 + (i * 52), 327, self.me.color)
 				for i in range(7):
-					self.canvas.draw_text(str(self.rival.biji[i]), 32, 190 + (i * 52), 269, self.rival.color)
-				self.canvas.draw_text(str(self.me.poin), 32, 554, 300, self.me.color)
-				self.canvas.draw_text(str(self.rival.poin), 32, 134, 300, self.rival.color)
+					self.canvas.draw_text(str(self.rival.biji[i]), 22, 190 + (i * 52), 265, self.rival.color)
+				self.canvas.draw_text(str(self.me.poin), 22, 554, 296, self.me.color)
+				self.canvas.draw_text(str(self.rival.poin), 22, 134, 296, self.rival.color)
 				pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (145, 308), 30, 2)
 				pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (565, 308), 30, 2)
 
@@ -130,17 +131,17 @@ class Game:
 						self.turn = 'rival'
 						self.rival.color = ((255, 0, 0))
 						self.me.color = ((0, 0, 255))
-					self.canvas.draw_text(turn, 32, 0, 0, self.bg_contrast)
+					self.canvas.draw_text(turn, 23, 3, 3, (135, 62, 35))
 			elif(flag == 0):
 				self.me.check_collision()
-				self.canvas.draw_text(warna, 32, 0, 0, self.bg_contrast)
+				self.canvas.draw_text(warna, 23, 3, 3, (135, 62, 35))
 				print('running')
 				if(self.turn == 'rival'):
 					print('waiting rival')
 					if (cek == 22):
-						self.canvas.draw_text("Your hole is empty, it's rival's turn..", 25, 0, 25, self.bg_contrast)
+						self.canvas.draw_text("Your hole is empty, it's rival's turn..", 23, 3, 28, (135, 62, 35))
 					else:
-						self.canvas.draw_text("Waiting rival's turn..", 25, 0, 25, self.bg_contrast)
+						self.canvas.draw_text("Waiting rival's turn..", 23, 3, 28, (135, 62, 35))
 					self.rival_move = self.parse_data(self.send_data('ask'))
 					print('from server', self.rival_move)
 					if(self.rival_move != -1):
@@ -161,11 +162,11 @@ class Game:
 				else:
 					print('do ur move')
 					if (cek == 1):
-						self.canvas.draw_text("You reached home, it's your turn again, do your move..", 25, 0, 25, self.bg_contrast)
+						self.canvas.draw_text("You reached home, it's your turn again, do your move..", 23, 3, 28, (135, 62, 35))
 					elif (cek == 2):
-						self.canvas.draw_text("Rival's hole is empty, do your move..", 25, 0, 25, self.bg_contrast)
+						self.canvas.draw_text("Rival's hole is empty, do your move..", 23, 3, 28, (135, 62, 35))
 					else:
-						self.canvas.draw_text("It's your turn, do your move..", 25, 0, 25, self.bg_contrast)
+						self.canvas.draw_text("It's your turn, do your move..", 23, 3, 28, (135, 62, 35))
 					if(event.type == pygame.MOUSEBUTTONDOWN):
 						if(self.me.lubang[0].collidepoint(event.pos) and self.me.biji[0] > 0 and self.animate == False):
 							self.animate = True
@@ -307,7 +308,7 @@ class Game:
 							elif(ganti == 3):
 								flag = 3
 							pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
-				
+
 				self.chat_btn_on = pygame.draw.rect(self.canvas.get_canvas(), (198, 139, 89), pygame.Rect(186, 458, 56, 31), 1)
 				self.chat_btn_off = pygame.draw.rect(self.canvas.get_canvas(), (198, 139, 89), pygame.Rect(251, 458, 56, 31), 1)
 				pygame.draw.circle(self.canvas.get_canvas(), self.chat_color, (165, 475), 5, 0)
@@ -348,19 +349,19 @@ class Game:
 				self.canvas.draw_background()
 				if(self.me.poin > self.rival.poin):
 					self.canvas.draw_image(pygame.transform.scale(self.winCondition, (700, 700)), (0, 0))
-					self.canvas.draw_text(self.user_text + ": " + str(self.me.poin), 35, 100, 200, (0, 255, 0))
-					self.canvas.draw_text(self.rival_text + ": " + str(self.rival.poin), 35, 100, 250, (255, 0, 0))
-					self.canvas.draw_text("Congrats " + self.user_text + ", you are the winner", 45, 75, 125, self.bg_contrast)
+					self.canvas.draw_text(self.user_text + ": " + str(self.me.poin), 30, 100, 200, (0, 255, 0))
+					self.canvas.draw_text(self.rival_text + ": " + str(self.rival.poin), 30, 100, 250, (255, 0, 0))
+					self.canvas.draw_text("Congrats " + self.user_text + ", you are the winner", 30, 75, 125, (135, 62, 35))
 				elif(self.me.poin == self.rival.poin):
 					self.canvas.draw_image(pygame.transform.scale(self.tieCondition, (700, 700)), (0, 0))
-					self.canvas.draw_text(self.user_text + ": " + str(self.me.poin), 35, 100, 200, (0, 0, 255))
-					self.canvas.draw_text(self.rival_text + ": " + str(self.rival.poin), 35, 100, 250, (0, 0, 255))
-					self.canvas.draw_text("The game is tie", 45, 240, 125, self.bg_contrast)
+					self.canvas.draw_text(self.user_text + ": " + str(self.me.poin), 30, 100, 200, (0, 0, 255))
+					self.canvas.draw_text(self.rival_text + ": " + str(self.rival.poin), 30, 100, 250, (0, 0, 255))
+					self.canvas.draw_text("The game is tie", 30, 240, 125, (135, 62, 35))
 				else:
 					self.canvas.draw_image(pygame.transform.scale(self.loseCondition, (700, 700)), (0, 0))
-					self.canvas.draw_text(self.user_text + ": " + str(self.me.poin), 35, 100, 200, (255, 0, 0))
-					self.canvas.draw_text(self.rival_text + ": " + str(self.rival.poin), 35, 100, 250, (0, 255, 0))
-					self.canvas.draw_text("Better luck next time!", 45, 200, 125, self.bg_contrast)
+					self.canvas.draw_text(self.user_text + ": " + str(self.me.poin), 30, 100, 200, (255, 0, 0))
+					self.canvas.draw_text(self.rival_text + ": " + str(self.rival.poin), 30, 100, 250, (0, 255, 0))
+					self.canvas.draw_text("Better luck next time!", 30, 200, 125, (135, 62, 35))
 				self.menu_btn = pygame.draw.rect(self.canvas.get_canvas(), (198, 139, 89), pygame.Rect(190, 630, 285, 35), 1)
 				if self.menu_btn.collidepoint(pygame.mouse.get_pos()):
 					pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
@@ -373,6 +374,7 @@ class Game:
 			elif(flag == 4): #input username
 				self.canvas.draw_background()
 				self.canvas.draw_image(pygame.transform.scale(self.inputUsername, (700, 700)), (0, 0))
+				self.canvas.draw_text("Press right arrow to enter the game", 22, 147, 400, (135, 62, 35))
 				events = pygame.event.get()
 				self.textinput.update(events)
 				self.canvas.get_canvas().blit(self.textinput.get_surface(), (155, 363))
@@ -402,7 +404,7 @@ class Game:
 				self.canvas.draw_image(pygame.transform.scale(self.dashboard, (700, 700)), (0, 0))
 				self.play_btn = pygame.draw.rect(self.canvas.get_canvas(), (64, 34, 24), pygame.Rect(150, 260, 400, 80), 1)
 				self.leaderboard_btn = pygame.draw.rect(self.canvas.get_canvas(), (64, 34, 24), pygame.Rect(150, 363, 400, 80), 1)
-				
+
 				if self.play_btn.collidepoint(pygame.mouse.get_pos()) or self.leaderboard_btn.collidepoint(pygame.mouse.get_pos()):
 					pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
 				else:
@@ -428,9 +430,9 @@ class Game:
 						row_color = (0, 255, 0)
 					else:
 						row_color = self.bg_contrast
-					self.canvas.draw_text(str(count) + '.', 25, 190, row, row_color)
-					self.canvas.draw_text(key, 25, 290, row, row_color)
-					self.canvas.draw_text(str(value), 25, 470, row, row_color)
+					self.canvas.draw_text(str(count) + '.', 22, 190, row, row_color)
+					self.canvas.draw_text(key, 22, 290, row, row_color)
+					self.canvas.draw_text(str(value), 22, 470, row, row_color)
 					row += 25
 					count += 1
 
@@ -464,11 +466,11 @@ class Game:
 		self.me.draw(self.canvas.get_canvas(), self.bg_color, 200, 340, 52, 25, 2)
 		self.rival.draw(self.canvas.get_canvas(), self.bg_color, 200, 278, 52, 25, 2)
 		for i in range(7):
-			self.canvas.draw_text(str(self.me.biji[i]), 32, 190 + (i * 52), 331, self.me.color)
+			self.canvas.draw_text(str(self.me.biji[i]), 22, 190 + (i * 52), 327, self.me.color)
 		for i in range(7):
-			self.canvas.draw_text(str(self.rival.biji[i]), 32, 190 + (i * 52), 269, self.rival.color)
-		self.canvas.draw_text(str(self.me.poin), 32, 554, 300, self.me.color)
-		self.canvas.draw_text(str(self.rival.poin), 32, 134, 300, self.rival.color)
+			self.canvas.draw_text(str(self.rival.biji[i]), 22, 190 + (i * 52), 265, self.rival.color)
+		self.canvas.draw_text(str(self.me.poin), 22, 554, 296, self.me.color)
+		self.canvas.draw_text(str(self.rival.poin), 22, 134, 296, self.rival.color)
 		pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (145, 308), 30, 2)
 		pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (565, 308), 30, 2)
 		self.canvas.update()
@@ -561,11 +563,11 @@ class Game:
 		self.me.draw(self.canvas.get_canvas(), self.bg_color, 200, 340, 52, 25, 2)
 		self.rival.draw(self.canvas.get_canvas(), self.bg_color, 200, 278, 52, 25, 2)
 		for i in range(7):
-			self.canvas.draw_text(str(self.me.biji[i]), 32, 190 + (i * 52), 331, self.me.color)
+			self.canvas.draw_text(str(self.me.biji[i]), 22, 190 + (i * 52), 327, self.me.color)
 		for i in range(7):
-			self.canvas.draw_text(str(self.rival.biji[i]), 32, 190 + (i * 52), 269, self.rival.color)
-		self.canvas.draw_text(str(self.me.poin), 32, 554, 300, self.me.color)
-		self.canvas.draw_text(str(self.rival.poin), 32, 134, 300, self.rival.color)
+			self.canvas.draw_text(str(self.rival.biji[i]), 22, 190 + (i * 52), 265, self.rival.color)
+		self.canvas.draw_text(str(self.me.poin), 22, 554, 296, self.me.color)
+		self.canvas.draw_text(str(self.rival.poin), 22, 134, 296, self.rival.color)
 		pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (145, 308), 30, 2)
 		pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (565, 308), 30, 2)
 		self.canvas.update()
@@ -722,16 +724,16 @@ class Game:
 		# self.canvas.update_text(sisa_biji, 32, 0, 0, (self.bg_contrast))
 		if(player == 'me biji'):
 			pygame.draw.circle(self.canvas.get_canvas(), self.on_color, ((200 + pos * 52), 340), 22)
-			self.canvas.update_text(text, 32, 190 + (pos * 52), 331, self.me.color)
+			self.canvas.update_text(text, 22, 190 + (pos * 52), 327, self.me.color)
 		elif(player == 'me poin'):
 			pygame.draw.circle(self.canvas.get_canvas(), self.on_color, (565, 308), 27)
-			self.canvas.update_text(text, 32, 554, 300, self.me.color)
+			self.canvas.update_text(text, 22, 554, 296, self.me.color)
 		elif(player == 'rival biji'):
 			pygame.draw.circle(self.canvas.get_canvas(), self.on_color, ((200 + pos * 52), 278), 22)
-			self.canvas.update_text(text, 32, 190 + (pos * 52), 269, self.rival.color)
+			self.canvas.update_text(text, 22, 190 + (pos * 52), 265, self.rival.color)
 		else:
 			pygame.draw.circle(self.canvas.get_canvas(), self.on_color, (145, 308), 27)
-			self.canvas.update_text(text, 32, 134, 300, self.rival.color)
+			self.canvas.update_text(text, 22, 134, 296, self.rival.color)
 
 		self.canvas.update()
 
@@ -764,7 +766,7 @@ class Canvas:
 		pygame.font.init()
 		if(len(text) == 1):
 			x += 5
-		font = pygame.font.SysFont("comicsans", size)
+		font = pygame.font.Font(os.path.join("assets", "COOPBL.ttf"), size)
 		render = font.render(text, 1, color)
 
 		self.screen.blit(render, (x,y))
@@ -773,7 +775,7 @@ class Canvas:
 		pygame.font.init()
 		if(len(text) == 1):
 			x += 5
-		font = pygame.font.SysFont("comicsans", size)
+		font = pygame.font.Font(os.path.join("assets", "COOPBL.ttf"), size)
 		# self.screen.fill(pygame.Color("white"), ((x-5), (y-1), 29, 26))
 		render = font.render(text, 1, color)
 
