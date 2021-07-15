@@ -5,7 +5,7 @@ Borrowed from https://github.com/Nearoo/pygame-text-input under the MIT license.
 """
 
 import os.path
-
+import os
 import pygame
 import pygame.locals as pl
 
@@ -22,10 +22,10 @@ class TextInput:
             self,
             initial_string=" ",
             font_family="",
-            font_size=25,
+            font_size=20,
             antialias=True,
-            text_color=(255, 255, 255),
-            cursor_color=(255, 255, 254),
+            text_color=(198, 139, 89),
+            cursor_color=(198, 139, 89),
             repeat_keys_initial_ms=400,
             repeat_keys_interval_ms=35,
             max_string_length=-1,
@@ -53,7 +53,8 @@ class TextInput:
         if not os.path.isfile(font_family):
             font_family = pygame.font.match_font(font_family)
 
-        self.font_object = pygame.font.Font(font_family, font_size)
+        self.font_object = pygame.font.Font(os.path.join("assets", "copse.ttf"), font_size)
+
 
         # Text-surface will be created during the first update call:
         self.surface = pygame.Surface((1, 1))
@@ -185,7 +186,6 @@ class TextInput:
         self.cursor_position = 1
 
 
-
 if __name__ == "__main__":
     pygame.init()
 
@@ -196,7 +196,7 @@ if __name__ == "__main__":
     clock = pygame.time.Clock()
 
     while True:
-		
+
         screen.fill((225, 225, 225))
 
         events = pygame.event.get()

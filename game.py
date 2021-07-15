@@ -97,11 +97,11 @@ class Game:
 				self.me.draw(self.canvas.get_canvas(), self.bg_color, 200, 340, 52, 25, 2)
 				self.rival.draw(self.canvas.get_canvas(), self.bg_color, 200, 278, 52, 25, 2)
 				for i in range(7):
-					self.canvas.draw_text(str(self.me.biji[i]), 22, 190 + (i * 52), 327, self.me.color)
+					self.canvas.draw_text(str(self.me.biji[i]), 22, 190 + (i * 52), 327, self.me.color,"copse.ttf")
 				for i in range(7):
-					self.canvas.draw_text(str(self.rival.biji[i]), 22, 190 + (i * 52), 265, self.rival.color)
-				self.canvas.draw_text(str(self.me.poin), 22, 554, 296, self.me.color)
-				self.canvas.draw_text(str(self.rival.poin), 22, 134, 296, self.rival.color)
+					self.canvas.draw_text(str(self.rival.biji[i]), 22, 190 + (i * 52), 265, self.rival.color, "copse.ttf")
+				self.canvas.draw_text(str(self.me.poin), 22, 554, 296, self.me.color,"copse.ttf")
+				self.canvas.draw_text(str(self.rival.poin), 22, 134, 296, self.rival.color,"copse.ttf")
 				pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (145, 308), 30, 2)
 				pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (565, 308), 30, 2)
 
@@ -131,17 +131,17 @@ class Game:
 						self.turn = 'rival'
 						self.rival.color = ((255, 0, 0))
 						self.me.color = ((0, 0, 255))
-					self.canvas.draw_text(turn, 23, 3, 3, (135, 62, 35))
+					self.canvas.draw_text(turn, 23, 3, 3, (54, 38, 28),"copse.ttf")
 			elif(flag == 0):
 				self.me.check_collision()
-				self.canvas.draw_text(warna, 23, 3, 3, (135, 62, 35))
+				self.canvas.draw_text(warna, 23, 3, 3, (54, 38, 28),"copse.ttf")
 				print('running')
 				if(self.turn == 'rival'):
 					print('waiting rival')
 					if (cek == 22):
-						self.canvas.draw_text("Your hole is empty, it's rival's turn..", 23, 3, 28, (135, 62, 35))
+						self.canvas.draw_text("Your hole is empty, it's rival's turn..", 23, 3, 28, (54, 38, 28),"copse.ttf")
 					else:
-						self.canvas.draw_text("Waiting rival's turn..", 23, 3, 28, (135, 62, 35))
+						self.canvas.draw_text("Waiting rival's turn..", 23, 3, 28, (54, 38, 28),"copse.ttf")
 					self.rival_move = self.parse_data(self.send_data('ask'))
 					print('from server', self.rival_move)
 					if(self.rival_move != -1):
@@ -162,11 +162,11 @@ class Game:
 				else:
 					print('do ur move')
 					if (cek == 1):
-						self.canvas.draw_text("You reached home, it's your turn again, do your move..", 23, 3, 28, (135, 62, 35))
+						self.canvas.draw_text("You reached home, it's your turn again, do your move..", 23, 3, 28, (54, 38, 28),"copse.ttf")
 					elif (cek == 2):
-						self.canvas.draw_text("Rival's hole is empty, do your move..", 23, 3, 28, (135, 62, 35))
+						self.canvas.draw_text("Rival's hole is empty, do your move..", 23, 3, 28, (54, 38, 28),"copse.ttf")
 					else:
-						self.canvas.draw_text("It's your turn, do your move..", 23, 3, 28, (135, 62, 35))
+						self.canvas.draw_text("It's your turn, do your move..", 23, 3, 28, (54, 38, 28),"copse.ttf")
 					if(event.type == pygame.MOUSEBUTTONDOWN):
 						if(self.me.lubang[0].collidepoint(event.pos) and self.me.biji[0] > 0 and self.animate == False):
 							self.animate = True
@@ -326,7 +326,7 @@ class Game:
 				if(self.chat_ongoing == True):
 					events = pygame.event.get()
 					self.chatinput.update(events)
-					self.canvas.get_canvas().blit(self.chatinput.get_surface(), (57, 504))
+					self.canvas.get_canvas().blit(self.chatinput.get_surface(), (57, 495))
 					if event.type == pygame.KEYDOWN:
 						if event.key == pygame.K_RIGHT:
 							chat_msg = self.chatinput.get_text()[1:]
@@ -338,9 +338,9 @@ class Game:
 							self.chatinput.clear_text()
 				chat_pickle = self.send_data('askchat:')
 				self.chat = pickle.loads(chat_pickle)
-				row = 545
+				row = 535
 				for i in range(len(self.chat)):
-					self.canvas.draw_text(str(self.chat[i]), 25, 57, row, self.brown_color)
+					self.canvas.draw_text(str(self.chat[i]), 20, 57, row, self.brown_color,"copse.ttf")
 					row += 20
 			elif(flag == 3): #winning condition
 				if(self.poin_not_sent):
@@ -349,19 +349,19 @@ class Game:
 				self.canvas.draw_background()
 				if(self.me.poin > self.rival.poin):
 					self.canvas.draw_image(pygame.transform.scale(self.winCondition, (700, 700)), (0, 0))
-					self.canvas.draw_text(self.user_text + ": " + str(self.me.poin), 30, 100, 200, (0, 255, 0))
-					self.canvas.draw_text(self.rival_text + ": " + str(self.rival.poin), 30, 100, 250, (255, 0, 0))
-					self.canvas.draw_text("Congrats " + self.user_text + ", you are the winner", 30, 75, 125, (135, 62, 35))
+					self.canvas.draw_text(self.user_text + ": " + str(self.me.poin), 30, 100, 200, (0, 255, 0),"copse.ttf")
+					self.canvas.draw_text(self.rival_text + ": " + str(self.rival.poin), 30, 100, 250, (255, 0, 0),"copse.ttf")
+					self.canvas.draw_text("Congrats " + self.user_text + ", you are the winner", 30, 80, 125, (54, 38, 28),"copse.ttf")
 				elif(self.me.poin == self.rival.poin):
 					self.canvas.draw_image(pygame.transform.scale(self.tieCondition, (700, 700)), (0, 0))
-					self.canvas.draw_text(self.user_text + ": " + str(self.me.poin), 30, 100, 200, (0, 0, 255))
-					self.canvas.draw_text(self.rival_text + ": " + str(self.rival.poin), 30, 100, 250, (0, 0, 255))
-					self.canvas.draw_text("The game is tie", 30, 240, 125, (135, 62, 35))
+					self.canvas.draw_text(self.user_text + ": " + str(self.me.poin), 30, 100, 200, (0, 0, 255),"copse.ttf")
+					self.canvas.draw_text(self.rival_text + ": " + str(self.rival.poin), 30, 100, 250, (0, 0, 255),"copse.ttf")
+					self.canvas.draw_text("The game is tie", 30, 240, 125, (54, 38, 28),"copse.ttf")
 				else:
 					self.canvas.draw_image(pygame.transform.scale(self.loseCondition, (700, 700)), (0, 0))
-					self.canvas.draw_text(self.user_text + ": " + str(self.me.poin), 30, 100, 200, (255, 0, 0))
-					self.canvas.draw_text(self.rival_text + ": " + str(self.rival.poin), 30, 100, 250, (0, 255, 0))
-					self.canvas.draw_text("Better luck next time!", 30, 200, 125, (135, 62, 35))
+					self.canvas.draw_text(self.user_text + ": " + str(self.me.poin), 30, 100, 200, (255, 0, 0),"copse.ttf")
+					self.canvas.draw_text(self.rival_text + ": " + str(self.rival.poin), 30, 100, 250, (0, 255, 0),"copse.ttf")
+					self.canvas.draw_text("Better luck next time!", 30, 200, 125, (54, 38, 28),"copse.ttf")
 				self.menu_btn = pygame.draw.rect(self.canvas.get_canvas(), (198, 139, 89), pygame.Rect(190, 630, 285, 35), 1)
 				if self.menu_btn.collidepoint(pygame.mouse.get_pos()):
 					pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
@@ -374,10 +374,10 @@ class Game:
 			elif(flag == 4): #input username
 				self.canvas.draw_background()
 				self.canvas.draw_image(pygame.transform.scale(self.inputUsername, (700, 700)), (0, 0))
-				self.canvas.draw_text("Press right arrow to enter the game", 22, 147, 400, (135, 62, 35))
+				self.canvas.draw_text("Press right arrow to enter the game", 26, 163, 400, (54, 38, 28), "dekko.ttf")
 				events = pygame.event.get()
 				self.textinput.update(events)
-				self.canvas.get_canvas().blit(self.textinput.get_surface(), (155, 363))
+				self.canvas.get_canvas().blit(self.textinput.get_surface(), (155, 357))
 				if event.type == pygame.KEYDOWN:
 					if event.key == pygame.K_RIGHT:
 						self.user_text = self.textinput.get_text()[1:]
@@ -430,9 +430,9 @@ class Game:
 						row_color = (0, 255, 0)
 					else:
 						row_color = self.bg_contrast
-					self.canvas.draw_text(str(count) + '.', 22, 190, row, row_color)
-					self.canvas.draw_text(key, 22, 290, row, row_color)
-					self.canvas.draw_text(str(value), 22, 470, row, row_color)
+					self.canvas.draw_text(str(count) + '.', 22, 190, row, row_color,"copse.ttf")
+					self.canvas.draw_text(key, 22, 290, row, row_color,"copse.ttf")
+					self.canvas.draw_text(str(value), 22, 470, row, row_color,"copse.ttf")
 					row += 25
 					count += 1
 
@@ -466,11 +466,11 @@ class Game:
 		self.me.draw(self.canvas.get_canvas(), self.bg_color, 200, 340, 52, 25, 2)
 		self.rival.draw(self.canvas.get_canvas(), self.bg_color, 200, 278, 52, 25, 2)
 		for i in range(7):
-			self.canvas.draw_text(str(self.me.biji[i]), 22, 190 + (i * 52), 327, self.me.color)
+			self.canvas.draw_text(str(self.me.biji[i]), 22, 190 + (i * 52), 327, self.me.color,"copse.ttf")
 		for i in range(7):
-			self.canvas.draw_text(str(self.rival.biji[i]), 22, 190 + (i * 52), 265, self.rival.color)
-		self.canvas.draw_text(str(self.me.poin), 22, 554, 296, self.me.color)
-		self.canvas.draw_text(str(self.rival.poin), 22, 134, 296, self.rival.color)
+			self.canvas.draw_text(str(self.rival.biji[i]), 22, 190 + (i * 52), 265, self.rival.color,"copse.ttf")
+		self.canvas.draw_text(str(self.me.poin), 22, 554, 296, self.me.color,"copse.ttf")
+		self.canvas.draw_text(str(self.rival.poin), 22, 134, 296, self.rival.color,"copse.ttf")
 		pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (145, 308), 30, 2)
 		pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (565, 308), 30, 2)
 		self.canvas.update()
@@ -563,11 +563,11 @@ class Game:
 		self.me.draw(self.canvas.get_canvas(), self.bg_color, 200, 340, 52, 25, 2)
 		self.rival.draw(self.canvas.get_canvas(), self.bg_color, 200, 278, 52, 25, 2)
 		for i in range(7):
-			self.canvas.draw_text(str(self.me.biji[i]), 22, 190 + (i * 52), 327, self.me.color)
+			self.canvas.draw_text(str(self.me.biji[i]), 22, 190 + (i * 52), 327, self.me.color,"copse.ttf")
 		for i in range(7):
-			self.canvas.draw_text(str(self.rival.biji[i]), 22, 190 + (i * 52), 265, self.rival.color)
-		self.canvas.draw_text(str(self.me.poin), 22, 554, 296, self.me.color)
-		self.canvas.draw_text(str(self.rival.poin), 22, 134, 296, self.rival.color)
+			self.canvas.draw_text(str(self.rival.biji[i]), 22, 190 + (i * 52), 265, self.rival.color,"copse.ttf")
+		self.canvas.draw_text(str(self.me.poin), 22, 554, 296, self.me.color,"copse.ttf")
+		self.canvas.draw_text(str(self.rival.poin), 22, 134, 296, self.rival.color,"copse.ttf")
 		pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (145, 308), 30, 2)
 		pygame.draw.circle(self.canvas.get_canvas(), self.bg_color, (565, 308), 30, 2)
 		self.canvas.update()
@@ -724,16 +724,16 @@ class Game:
 		# self.canvas.update_text(sisa_biji, 32, 0, 0, (self.bg_contrast))
 		if(player == 'me biji'):
 			pygame.draw.circle(self.canvas.get_canvas(), self.on_color, ((200 + pos * 52), 340), 22)
-			self.canvas.update_text(text, 22, 190 + (pos * 52), 327, self.me.color)
+			self.canvas.update_text(text, 22, 190 + (pos * 52), 327, self.me.color,"copse.ttf")
 		elif(player == 'me poin'):
 			pygame.draw.circle(self.canvas.get_canvas(), self.on_color, (565, 308), 27)
-			self.canvas.update_text(text, 22, 554, 296, self.me.color)
+			self.canvas.update_text(text, 22, 554, 296, self.me.color,"copse.ttf")
 		elif(player == 'rival biji'):
 			pygame.draw.circle(self.canvas.get_canvas(), self.on_color, ((200 + pos * 52), 278), 22)
-			self.canvas.update_text(text, 22, 190 + (pos * 52), 265, self.rival.color)
+			self.canvas.update_text(text, 22, 190 + (pos * 52), 265, self.rival.color,"copse.ttf")
 		else:
 			pygame.draw.circle(self.canvas.get_canvas(), self.on_color, (145, 308), 27)
-			self.canvas.update_text(text, 22, 134, 296, self.rival.color)
+			self.canvas.update_text(text, 22, 134, 296, self.rival.color,"copse.ttf")
 
 		self.canvas.update()
 
@@ -762,20 +762,20 @@ class Canvas:
 	def update():
 		pygame.display.update()
 
-	def draw_text(self, text, size, x, y, color):
+	def draw_text(self, text, size, x, y, color, type):
 		pygame.font.init()
 		if(len(text) == 1):
 			x += 5
-		font = pygame.font.Font(os.path.join("assets", "COOPBL.ttf"), size)
+		font = pygame.font.Font(os.path.join("assets", type), size)
 		render = font.render(text, 1, color)
 
 		self.screen.blit(render, (x,y))
 
-	def update_text(self, text, size, x, y, color):
+	def update_text(self, text, size, x, y, color, type):
 		pygame.font.init()
 		if(len(text) == 1):
 			x += 5
-		font = pygame.font.Font(os.path.join("assets", "COOPBL.ttf"), size)
+		font = pygame.font.Font(os.path.join("assets", type), size)
 		# self.screen.fill(pygame.Color("white"), ((x-5), (y-1), 29, 26))
 		render = font.render(text, 1, color)
 
