@@ -129,6 +129,7 @@ def clientthread(conn, addr):
 					msg = 'ack:'
 					conn.send(msg.encode())
 				elif(reply.split(':')[1] == 'score'):
+					del chat[:]
 					print('scoring')
 					id = int(reply.split(':')[0])
 					play[id] = 0
